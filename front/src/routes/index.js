@@ -1,5 +1,6 @@
 import Layout from "../layouts/DefaultLayout.vue";
 import HomePage from "../views/Home.vue";
+import NotFound from "../views/NotFound.vue";
 import GenerationPage from "../views/Generation.vue";
 import ExplorePage from "../views/Explore.vue";
 import ComponentPage from "../views/Component.vue";
@@ -43,6 +44,11 @@ const mainRoutes = [
         name: "Legal",
       },
     ],
+  },
+  {
+    path: '/:catchAll(.*)',
+    name: '404',
+    component: NotFound,
   },
 ];
 
