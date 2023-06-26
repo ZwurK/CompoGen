@@ -1,6 +1,6 @@
 <template>
-  <div class="p-10">
-    <h1 class="text-4xl font-bold text-pink-400 mb-10">Explore Components</h1>
+  <div class="p-10 bg-gray-100">
+    <h1 class="text-4xl font-bold mb-10">Explore Components</h1>
 
     <select v-model="filter"
       class="block w-full bg-white border-2 border-gray-300 focus:border-purple-500 text-base leading-6 font-medium rounded-md text-gray-700 focus:outline-none transition ease-in-out duration-150 px-3 py-2 mb-4">
@@ -10,7 +10,7 @@
 
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="component in filteredComponents" :key="component.id" class="border border-gray-300 rounded-lg p-4">
+      <div v-for="component in filteredComponents" :key="component.id" class="border border-gray-300 rounded-lg p-4 bg-white">
         <div class="h-32 rounded-md mb-2">
           <iframe sandbox="allow-same-origin allow-scripts"
             :srcdoc.prop="generateSrcDoc(component.framework, component.code)"
@@ -20,9 +20,9 @@
         <h2 class="text-2xl font-bold text-pink-400 mb-2">{{ component.name }}</h2>
         <div class="flex items-center">
           <router-link :to="`/component/${component._id}`"
-            class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded mr-2">Live view</router-link>
+            class="px-4 py-2 bg-violet-600 text-white rounded mr-2">Live view</router-link>
           <button @click="copyToClipboard(component.code)"
-            class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded mr-2">
+            class="px-4 py-2 bg-violet-600 text-white rounded mr-2">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
               <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>

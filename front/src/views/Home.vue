@@ -1,19 +1,19 @@
 <template>
-    <section class="pt-24 bg-white">
+    <section class="mt-40 bg-white">
         <div class="px-12 mx-auto max-w-7xl">
             <div class="w-full mx-auto text-left md:w-11/12 xl:w-9/12 md:text-center">
                 <h1
                     class="mb-8 text-4xl font-extrabold leading-none tracking-normal text-gray-900 md:text-6xl md:tracking-tight">
                     <span>Looking for</span> <span
-                        class="block w-full py-2 text-transparent bg-clip-text leading-12 bg-gradient-to-r from-pink-500 to-purple-500 lg:inline">the
-                        perfect</span> <span>web component?</span>
+                        class="block w-full py-2 text-transparent bg-clip-text leading-12 bg-gradient-to-r from-violet-600 to-indigo-600 lg:inline">the
+                        perfect </span><span>web component?</span>
                 </h1>
                 <p class="px-0 mb-8 text-lg text-gray-600 md:text-xl lg:px-24">
                     Browse through thousands of ready-to-use components and generate your own using AI.
                 </p>
                 <div class="mb-4 space-x-0 md:space-x-2 md:mb-8">
                     <a href="#_"
-                        class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 rounded-2xl sm:w-auto sm:mb-0">
+                        class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-2xl sm:w-auto sm:mb-0">
                         Get Started
                         <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                             fill="currentColor">
@@ -23,7 +23,7 @@
                         </svg>
                     </a>
                     <a href="#_"
-                        class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg bg-gray-100 rounded-2xl sm:w-auto sm:mb-0">
+                        class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg bg-gray-200 hover:bg-gray-100 rounded-2xl sm:w-auto sm:mb-0">
                         Learn More
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
