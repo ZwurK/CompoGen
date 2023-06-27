@@ -1,20 +1,18 @@
 <template>
-    <router-link :to="`/component/${component._id}`" class="border border-gray-300 rounded-lg p-4 bg-white relative">
-        <div class="h-32 rounded-md mb-16">
-            <iframe sandbox="allow-same-origin allow-scripts"
+    <div class="rounded-lg bg-white m-4 border">
+        <router-link :to="`/component/${component._id}`"> <iframe sandbox="allow-same-origin allow-scripts"
                 :srcdoc.prop="generateSrcDoc(component.framework, component.code)"
-                style="width: 100%; height: 100%;"></iframe>
-        </div>
-        <div class="flex items-center absolute bottom-1 right-2">
-            <button @click="like(component)" class="px-4 py-2">
-                {{ component.likes }}
-                <LikeIcon />
+                style="width: 100%; height: 100%;"></iframe></router-link>
+        <div class="flex items-center gap-3 justify-end mt-2">
+            <button @click="like(component)" class="flex items-center gap-1 text-gray-400">
+                <span class="text-sm">{{ component.likes }}</span>
+                <LikeIcon :filled="hasLiked(component._id)" />
             </button>
-            <button @click="copyToClipboard(component.code)" class="px-4 py-2 bg-violet-600 text-white rounded mr-2">
+            <button @click="copyToClipboard(component.code)" class="text-gray-400">
                 <CopyIcon />
             </button>
         </div>
-    </router-link>
+    </div>
 </template>
 
 <script>
@@ -29,6 +27,9 @@ export default {
         LikeIcon
     },
     methods: {
+        hasLiked(id) {
+            return this.likedComponents.includes(id);
+        },
         async copyToClipboard(text) {
             try {
                 await navigator.clipboard.writeText(text);
@@ -47,7 +48,7 @@ export default {
                     <head>
                         ${cssLink}
                     </head>
-                    <body>
+                    <body style="background-color: #f9fafb;">
                         ${code}
                         <script>
                     document.addEventListener('DOMContentLoaded', function() {

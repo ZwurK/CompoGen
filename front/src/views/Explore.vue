@@ -1,5 +1,5 @@
 <template>
-  <div class="p-10 bg-gray-100">
+  <div class="p-10">
     <h1 class="text-4xl font-bold mb-10">Explore Components</h1>
 
     <select v-model="filter"
