@@ -1,6 +1,6 @@
 <template>
-  <div class="p-10">
-    <h1 class="text-4xl font-bold mb-10">Explore Components</h1>
+  <div class="p-10 mt-24">
+    <h1 class="text-4xl text-gray-900 font-bold mb-10">Explore Components</h1>
 
     <select v-model="filter"
       class="block w-full bg-white border-2 border-gray-300 focus:border-purple-500 text-base leading-6 font-medium rounded-md text-gray-700 focus:outline-none transition ease-in-out duration-150 px-3 py-2 mb-4">
@@ -12,19 +12,17 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <ComponentCard v-for="component in filteredComponents" :key="component.id" :component="component"
         :likedComponents="likedComponents" @like-component="likeComponent" />
-
-
     </div>
     <div class="flex justify-between my-8">
       <button :disabled="currentPage <= 1" @click="prevPage"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded">
         Previous
       </button>
       <div>
         Page {{ currentPage }} of {{ totalPages }}
       </div>
       <button :disabled="currentPage >= totalPages" @click="nextPage"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded">
         Next
       </button>
     </div>

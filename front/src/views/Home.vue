@@ -1,6 +1,7 @@
 <template>
     <section class="mt-40 bg-white">
         <div class="px-12 mx-auto max-w-7xl">
+            import ComponentCard from '../components/ComponentCard.vue';
             <div class="w-full mx-auto text-left md:w-11/12 xl:w-9/12 md:text-center">
                 <h1
                     class="mb-8 text-4xl font-extrabold leading-none tracking-normal text-gray-900 md:text-6xl md:tracking-tight">
@@ -47,42 +48,9 @@
         </h2>
         <div class="relative">
             <div class="flex gap-4 pb-8 overflow-x-scroll hide-scrollbar" ref="scroller">
-                <div v-for="component in topComponents" :key="component.id"
-                    class="border border-gray-300 rounded-lg p-4 min-w-[40%]">
-                    <div class="h-32 rounded-md mb-2">
-                        <iframe :srcdoc="generateSrcDoc(component.framework, component.code)"
-                            style="width: 100%; height: 100%;" sandbox="allow-scripts"></iframe>
-                    </div>
-                    <hr class="my-12 h-0.5 border-t-0 bg-purple-400" />
-                    <h2 class="text-2xl font-bold text-pink-400 mb-2">{{ component.name }}</h2>
-                    <div class="flex items-center">
-                        <router-link :to="`/component/${component._id}`"
-                            class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded mr-2">Live
-                            view</router-link>
-                        <button @click="copyToClipboard(component.code)"
-                            class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded mr-2">
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <path
-                                        d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15"
-                                        stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                                    </path>
-                                    <path d="M9 12H15" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                    </path>
-                                    <path d="M9 16H12" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                    </path>
-                                    <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
-                                        stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                                    </path>
-                                </g>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+                <ComponentCard v-for="component in $store.getters['explore/topComponents']" :key="component.id"
+                    :component="component" :likedComponents="likedComponents" @like-component="likeComponent" />
+
             </div>
             <button @click="scroll(-1)"
                 class="absolute top-1/2 left-0 transform -translate-y-1/2 z-10 p-4 bg-white rounded-full shadow-lg">
@@ -130,32 +98,30 @@
   
 <script>
 
+import ComponentCard from '../components/ComponentCard.vue';
+import { mapActions, mapGetters } from 'vuex';
 import axios from 'axios';
 
 export default {
-    name: 'HomePage',
+    name: "HomePage",
     data() {
         return {
             topComponents: [],
-            email: '',
+            email: "",
         };
     },
-    async created() {
-        try {
-            const response = await axios.get('http://localhost:3000/api/elements/top');
-            this.topComponents = response.data;
-        } catch (error) {
-            console.error(error);
-        }
+    computed: {
+        ...mapGetters('favorite', ['likedComponents']),
+    },
+    mounted() {
+        this.$store.dispatch("explore/fetchTopComponents");
     },
     methods: {
-        async copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                alert('Code copié dans le presse-papier!');
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-            }
+        ...mapActions('favorite', ['updateLikedComponents']),
+        ...mapActions('explore', ['updateComponentLikes']),
+        async likeComponent(componentId) {
+            const newLikes = await this.updateLikedComponents(componentId);
+            this.updateComponentLikes({ componentId, newLikes });
         },
         scroll(direction) {
             const container = this.$refs.scroller;
@@ -168,45 +134,18 @@ export default {
                 }
             }, 25);
         },
-
-        generateSrcDoc(framework, code) {
-            /* eslint-disable no-useless-escape */
-            let cssLink = framework === 'Bootstrap'
-                ? '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"><\/script>'
-                : '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">';
-
-            return `<html>
-                    <head>
-                        ${cssLink}
-                    </head>
-                    <body>
-                        ${code}
-                        <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                      var links = document.getElementsByTagName('a');
-                      for (var i = 0; i < links.length; i++) {
-                        links[i].addEventListener('click', function(e) {
-                          e.preventDefault();
-                        });
-                      }
-                    });
-                  <\/script>
-                    </body>
-                </html>`;
-            /* eslint-enable no-useless-escape */
-        },
         submitForm() {
-            axios.post('http://localhost:3000/newsletter/subscribe', { email: this.email })
+            axios.post("http://localhost:3000/newsletter/subscribe", { email: this.email })
                 .then(response => {
                     console.log(response);
-                    this.email = '';
+                    this.email = "";
                 })
                 .catch(error => {
                     console.log(error);
                 });
         },
-    }
-
+    },
+    components: { ComponentCard }
 };
 </script>
 

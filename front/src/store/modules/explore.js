@@ -3,11 +3,13 @@ import axios from 'axios';
 const state = {
   components: [],
   totalPages: 0,
+  topComponents: [],
 };
 
 const getters = {
   components: (state) => state.components,
   totalPages: (state) => state.totalPages,
+  topComponents: (state) => state.topComponents,
 };
 
 const actions = {
@@ -18,6 +20,10 @@ const actions = {
   },
   updateComponentLikes({ commit }, payload) {
     commit('updateComponentLikes', payload);
+  },
+  async fetchTopComponents({ commit }) {
+    const response = await axios.get('http://localhost:3000/api/elements/top');
+    commit('setTopComponents', response.data);
   },
 };
 
@@ -30,6 +36,7 @@ const mutations = {
       component.likes = newLikes;
     }
   },
+  setTopComponents: (state, topComponents) => (state.topComponents = topComponents),
 };
 
 export default {
