@@ -5,6 +5,7 @@ import "./assets/style.css";
 import { createRouter, createWebHistory } from "vue-router";
 import authRoutes from "./routes/auth";
 import mainRoutes from "./routes/index";
+import store from "./store";  // Importer le store ici
 
 const routes = mainRoutes.concat(authRoutes);
 
@@ -28,4 +29,4 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-createApp(App).use(router).mount("#app");
+createApp(App).use(router).use(store).mount("#app"); 
