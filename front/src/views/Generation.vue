@@ -30,6 +30,10 @@
                         </form>
                     </div>
                 </div>
+                <a class="text-sm text-violet-600 hover:text-purple-500 font-semibold mt-20" target="_blank"
+                    href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key">
+                    Where do I find my api key ?
+                </a>
             </div>
         </div>
     </div>
