@@ -28,7 +28,7 @@
   </template>
 
 <script>
-import authenticatedAxios from '../../config/axios';
+import authenticatedAxios from '../../config/authenticatedAxios';
 
 export default {
   name: 'ProfilePage',

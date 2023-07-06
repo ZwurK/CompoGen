@@ -19,6 +19,15 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Component'
   }],
+  numberGeneration: {
+    type: Number,
+    default: 0,
+  },
+  apiKey: {
+    type: String,
+    required: true,
+    unique: true
+  },
   date: {
     type: Date,
     default: Date.now

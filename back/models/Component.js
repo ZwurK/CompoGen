@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ComponentSchema = new mongoose.Schema({
   type: { type: String, required: true },
@@ -10,6 +11,8 @@ const ComponentSchema = new mongoose.Schema({
   },
   date: { type: Date, default: Date.now },
 });
+
+ComponentSchema.plugin(mongoosePaginate);
 
 const Component = mongoose.model("Component", ComponentSchema);
 

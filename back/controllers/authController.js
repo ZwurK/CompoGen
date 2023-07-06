@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ message: "Cet email est déjà utilisé, connectez-vous." });
+        .json({ message: "This email is already in use, please sign in." });
     }
 
     // Créer un nouvel utilisateur
@@ -30,11 +30,11 @@ exports.register = async (req, res) => {
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
-    return res.status(200).json({ message: "Inscription réussie" });
+    return res.status(200).json({ message: "Successful registration." });
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "Une erreur est survenue lors de l'inscription" });
+      .json({ message: "An error occurred during registration." });
   }
 };
 
@@ -52,7 +52,7 @@ exports.login = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ message: "Email ou mot de passe incorrect" });
+        .json({ message: "Incorrect email address or password." });
     }
 
     // Vérifier le mot de passe
@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
     if (!isPasswordValid) {
       return res
         .status(400)
-        .json({ message: "Email ou mot de passe incorrect" });
+        .json({ message: "Incorrect email address or password." });
     }
 
     // Récupérer la valeur de TOKEN_EXPIRY depuis le fichier .env
@@ -75,7 +75,7 @@ exports.login = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "Une erreur est survenue lors de la connexion" });
+      .json({ message: "An error has occurred during connection." });
   }
 };
 
@@ -91,7 +91,7 @@ exports.forgotPassword = async (req, res) => {
     // Vérifier si l'utilisateur existe
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Email non trouvé" });
+      return res.status(400).json({ message: "Email not found." });
     }
 
     // Générer un token de réinitialisation de mot de passe
@@ -104,24 +104,23 @@ exports.forgotPassword = async (req, res) => {
     const mailOptions = {
       from: "your-email@example.com", // Remplacez par votre adresse e-mail
       to: user.email, // Utilisez l'adresse e-mail de l'utilisateur
-      subject: "Demande de réinitialisation de mot de passe",
-      text: `Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant : https://your-app.com/reset-password/${resetToken}`,
+      subject: "Request for password reset.",
+      text: `To reset your password, click on the following link: https://your-app.com/reset-password/${resetToken}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         return res.status(500).json({
-          message: "Une erreur est survenue lors de l'envoi de l'e-mail",
+          message: "An error has occurred while sending the e-mail.",
         });
       }
       return res.status(200).json({
-        message: "Un e-mail de réinitialisation de mot de passe a été envoyé",
+        message: "A password reset email has been sent.",
       });
     });
   } catch (error) {
     return res.status(500).json({
-      message:
-        "Une erreur est survenue lors de la demande de réinitialisation de mot de passe",
+      message: "An error has occurred when requesting a password reset.",
     });
   }
 };
@@ -145,7 +144,7 @@ exports.resetPassword = async (req, res) => {
 
     if (!user) {
       return res.status(400).json({
-        message: "Token de réinitialisation de mot de passe invalide ou expiré",
+        message: "Invalid or expired password reset token.",
       });
     }
 
@@ -155,13 +154,28 @@ exports.resetPassword = async (req, res) => {
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    return res
-      .status(200)
-      .json({ message: "Mot de passe réinitialisé avec succès" });
+    return res.status(200).json({ message: "Password successfully reset." });
   } catch (error) {
     return res.status(500).json({
-      message:
-        "Une erreur est survenue lors de la réinitialisation du mot de passe",
+      message: "An error occurred when resetting the password.",
     });
+  }
+};
+
+exports.saveApiKey = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Sauvegarder la clé API
+    user.apiKey = req.body.apiKey;
+    await user.save();
+
+    res.json({ message: "API key saved successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
   }
 };

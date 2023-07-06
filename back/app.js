@@ -20,7 +20,7 @@ app.use(express.json());
 app.use('/api/auth', userRoutes);
 app.use('/api/favorite', favoriteRoutes);
 app.use('/api/profile', profileRoutes);
-app.use('/api/elements', componentRoutes);
+app.use('/api/components', componentRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 
@@ -29,7 +29,7 @@ app.use(function (err, req, res, next) {
   res.status(500).send('Something broke!')
 })
 
-mongoose.connect('mongodb://127.0.0.1:27017/GenElements', {
+mongoose.connect('mongodb://127.0.0.1:27017/CompoGen', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000 

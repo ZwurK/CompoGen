@@ -5,7 +5,7 @@ const componentController = require('../controllers/componentController');
 
 router.post('/generate', authenticate,componentController.generate);
 router.get('/explore',componentController.explore);
-router.get('/getOneElement/:id', componentController.getOneElement);
+router.get('/getOneComponent/:id', componentController.getOneComponent);
 
 router.get('/top', componentController.top);
 

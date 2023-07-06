@@ -1,46 +1,53 @@
-import authenticatedAxios from '../../config/axios';
+import authenticatedAxios from "../../config/authenticatedAxios";
+import unauthenticatedAxios from "../../config/unauthenticatedAxios";
 
 const state = {
-  likedComponents: [],
+  userFavorites: [],
+  components: [],
 };
 
 const getters = {
-  likedComponents: (state) => state.likedComponents,
+  userFavorites: (state) => state.userFavorites,
+  components: (state) => state.components,
 };
 
 const actions = {
-  async updateLikedComponents({ commit, state }, componentId) {
-    try {
-
-      const hasLiked = state.likedComponents.includes(componentId);
-      
-      let response;
-      if (hasLiked) {
-
-        response = await authenticatedAxios.put(`http://localhost:3000/api/favorite/unlike/${componentId}`);
-      } else {
-
-        response = await authenticatedAxios.put(`http://localhost:3000/api/favorite/like/${componentId}`);
-      }
-
-      if (response.status === 200) {
-        commit('updateLikedComponents', componentId);
-        return response.data.likes;
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  async fetchUserFavorites({ commit }) {
+    const response = await authenticatedAxios.get(
+      "/api/favorite/getUserFavorites"
+    );
+    commit("setUserFavorites", response.data);
+  },
+  async fetchComponents({ commit }, params) {
+    const response = await unauthenticatedAxios.get("/api/components/explore", {
+      params: params,
+    });
+    commit("setComponents", response.data.docs);
   },
 };
 
-
 const mutations = {
-  updateLikedComponents: (state, componentId) => {
-    const index = state.likedComponents.indexOf(componentId);
-    if (index > -1) {
-      state.likedComponents.splice(index, 1);
-    } else {
-      state.likedComponents.push(componentId);
+  setUserFavorites(state, favorites) {
+    state.userFavorites = favorites;
+  },
+  addFavorite(state, componentId) {
+    state.userFavorites.push(componentId);
+  },
+  removeFavorite(state, componentId) {
+    const index = state.userFavorites.indexOf(componentId);
+    if (index !== -1) {
+      state.userFavorites.splice(index, 1);
+    }
+  },
+  setComponents(state, components) {
+    state.components = components;
+  },
+  updateComponentLikes(state, { componentId, likes }) {
+    const index = state.components.findIndex(
+      (component) => component._id === componentId
+    );
+    if (index !== -1) {
+      state.components[index].likes = likes;
     }
   },
 };

@@ -24,7 +24,7 @@
 </template>
   
 <script>
-import axios from '../../config/axios';
+import unauthenticatedAxios from '../../config/unauthenticatedAxios';
 
 export default {
   data() {
@@ -40,7 +40,7 @@ export default {
       this.errors = []; // Réinitialisation des erreurs
       this.message = ''; // Réinitialisation du message de succès
 
-      axios.post('/api/auth/forgot-password', {
+      unauthenticatedAxios.post('/api/auth/forgot-password', {
         email: this.email
       })
         .then(response => {

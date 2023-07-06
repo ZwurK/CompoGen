@@ -1,7 +1,6 @@
 <template>
-    <section class="mt-40 bg-white">
-        <div class="px-12 mx-auto max-w-7xl">
-            import ComponentCard from '../components/ComponentCard.vue';
+    <section class="mt-40 bg-white flex flex-wrap lg:flex-nowrap justify-center">
+        <div class="px-12 mx-auto max-w-7xl mt-20">
             <div class="w-full mx-auto text-left md:w-11/12 xl:w-9/12 md:text-center">
                 <h1
                     class="mb-8 text-4xl font-extrabold leading-none tracking-normal text-gray-900 md:text-6xl md:tracking-tight">
@@ -13,59 +12,59 @@
                     Browse through thousands of ready-to-use components and generate your own using AI.
                 </p>
                 <div class="mb-4 space-x-0 md:space-x-2 md:mb-8">
-                    <a href="#_"
+                    <router-link to="/generate"
                         class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-2xl sm:w-auto sm:mb-0">
                         Get Started
-                        <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                            fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </a>
-                    <a href="#_"
+                        <ArrowRightIcon />
+                    </router-link>
+                    <router-link to="/"
                         class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg bg-gray-200 hover:bg-gray-100 rounded-2xl sm:w-auto sm:mb-0">
                         Learn More
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
-                            </path>
-                        </svg>
-                    </a>
+                        <LightIcon />
+                    </router-link>
                 </div>
             </div>
+        </div>
+        <div class="w-1/2">
+            <img src="../assets/images/landing.png" />
         </div>
     </section>
 
     <section class="w-full overflow-hidden bg-white mt-40">
-        <h2
-            class="text-center mb-8 text-3xl font-extrabold leading-none tracking-normal text-gray-900 md:text-4xl md:tracking-tight">
-            <span
-                class="block w-full py-2 text-transparent bg-clip-text leading-12 bg-gradient-to-r from-pink-500 to-purple-500 lg:inline">Featured
-            </span>
-            <span>components</span>
-        </h2>
-        <div class="relative">
-            <div class="flex gap-4 pb-8 overflow-x-scroll hide-scrollbar" ref="scroller">
-                <ComponentCard v-for="component in $store.getters['explore/topComponents']" :key="component.id"
-                    :component="component" :likedComponents="likedComponents" @like-component="likeComponent" />
-
-            </div>
-            <button @click="scroll(-1)"
-                class="absolute top-1/2 left-0 transform -translate-y-1/2 z-10 p-4 bg-white rounded-full shadow-lg">
+        <div class="flex  justify-between">
+            <div></div>
+            <h2
+                class="text-center mb-8 text-3xl font-extrabold leading-none tracking-normal text-gray-900 md:text-4xl md:tracking-tight">
+                <span
+                    class="block w-full py-2 text-transparent bg-clip-text leading-12 bg-gradient-to-r from-violet-600 to-indigo-600 lg:inline">Featured
+                </span>
+                <span>components</span>
+            </h2>
+            <div class="mt-4 me-10 space-x-4">
+                <button @click="scroll(-100)"
+                >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     class="w-6 h-6 text-gray-500">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
-            <button @click="scroll(1)"
-                class="absolute top-1/2 right-0 transform -translate-y-1/2 z-10 p-4 bg-white rounded-full shadow-lg">
+            <button @click="scroll(100)"
+                >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     class="w-6 h-6 text-gray-500">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
             </button>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex gap-4 overflow-x-scroll hide-scrollbar" ref="scroller">
+                <ComponentCard class="basis-full lg:basis-4/12 mx-4 flex-shrink-0" v-for="component in topComponents"
+                    :key="component.id" :component="component" />
+            </div>
+
+
         </div>
     </section>
 
@@ -78,18 +77,14 @@
             <p class="px-0 mb-8 text-lg text-gray-600 md:text-xl lg:px-24">
                 Subscribe to our newsletter for updates and new components.
             </p>
-            <form @submit.prevent="submitForm" class="mb-4 space-x-0 md:space-x-2 md:mb-8">
+            <form @submit.prevent="subscribe" class="mb-4 space-x-0 md:space-x-2 md:mb-8">
                 <input v-model="email" type="email"
-                    class="w-full px-3 py-2 mb-2 text-lg border rounded-lg focus:outline-none focus:border-blue-500 sm:w-auto sm:mb-0"
-                    placeholder="Enter your email" />
+                    class="text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded-2xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white"
+                    placeholder="Enter your email" required />
                 <button
-                    class="inline-flex items-center justify-center w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 rounded-2xl sm:w-auto">
+                    class="inline-flex items-center justify-center w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-2xl sm:w-auto">
                     Subscribe
-                    <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                            clip-rule="evenodd"></path>
-                    </svg>
+                    <ArrowRightIcon />
                 </button>
             </form>
         </div>
@@ -98,12 +93,16 @@
   
 <script>
 
+import ArrowRightIcon from '../components/icons/ArrowRight.vue';
+import LightIcon from '../components/icons/Light.vue';
 import ComponentCard from '../components/ComponentCard.vue';
-import { mapActions, mapGetters } from 'vuex';
-import axios from 'axios';
+import unauthenticatedAxios from '../config/unauthenticatedAxios';
+import { useToast } from "vue-toastification";
+import { mapGetters } from 'vuex';
 
 export default {
     name: "HomePage",
+    components: { ComponentCard, ArrowRightIcon, LightIcon },
     data() {
         return {
             topComponents: [],
@@ -111,41 +110,69 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('favorite', ['likedComponents']),
+        ...mapGetters('user', ['isLoggedIn']),
     },
-    mounted() {
-        this.$store.dispatch("explore/fetchTopComponents");
+    async created() {
+        this.fetchTopComponents();
     },
     methods: {
-        ...mapActions('favorite', ['updateLikedComponents']),
-        ...mapActions('explore', ['updateComponentLikes']),
-        async likeComponent(componentId) {
-            const newLikes = await this.updateLikedComponents(componentId);
-            this.updateComponentLikes({ componentId, newLikes });
-        },
         scroll(direction) {
             const container = this.$refs.scroller;
-            let scrollAmount = 0;
-            const slideTimer = setInterval(() => {
-                container.scrollLeft += direction * 10;
-                scrollAmount += 10;
-                if (scrollAmount >= 100) {
-                    clearInterval(slideTimer);
-                }
-            }, 25);
+            const maxScrollWidth = container.scrollWidth - container.clientWidth / 2 - container.clientWidth / 2;
+
+            if (maxScrollWidth !== 0) {
+                let scrollAmount = 0;
+                const slideTimer = setInterval(() => {
+                    container.scrollLeft += direction * 10;
+                    scrollAmount += 10;
+                    if (scrollAmount >= 100) {
+                        clearInterval(slideTimer);
+                    }
+                });
+            }
         },
-        submitForm() {
-            axios.post("http://localhost:3000/newsletter/subscribe", { email: this.email })
+        async fetchTopComponents() {
+            if (this.isLoggedIn) {
+                await this.$store.dispatch("favorite/fetchUserFavorites"); // Permet de charger les favoris de l'utilisateur avant les composants pour éviter les bugs
+            }
+            unauthenticatedAxios.get("/api/components/top")
                 .then(response => {
-                    console.log(response);
-                    this.email = "";
+                    this.topComponents = response.data;
                 })
                 .catch(error => {
                     console.log(error);
                 });
         },
+        subscribe() {
+            unauthenticatedAxios.post("/api/newsletter/subscribe", { email: this.email })
+                .then(response => {
+                    console.log(response);
+                    this.email = "";
+                    const toast = useToast();
+                    toast.success('You have subscribed to the newsletter.', {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                    if (error.response) {
+                        const toast = useToast();
+                        toast.error(`Error: ${error.response.data.errors[0].msg}`, {
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                        });
+                    } else {
+                        const toast = useToast();
+                        toast.error(`Error: An unexpected error has occurred.`, {
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                        });
+                    }
+                });
+        },
+
     },
-    components: { ComponentCard }
 };
 </script>
 
@@ -157,6 +184,7 @@ export default {
 .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+    scroll-behavior: smooth;
 }
 </style>
   

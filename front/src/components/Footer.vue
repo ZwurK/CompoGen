@@ -8,7 +8,7 @@
         <div class="lg:w-1/3">
           <a rel="noopener noreferrer" href="#" class="flex justify-center space-x-3 lg:justify-start">
             <div class="flex items-center justify-center w-12 h-12 rounded-full">
-              <img class="flex-shrink-0 w-8 h-8 rounded-md text-blue-50" src="../assets/logo.png">
+              <img class="flex-shrink-0 w-9 h-9 rounded-md text-blue-50" src="../assets/images/logo.png">
             </div>
             <span class="self-center text-2xl font-semibold">CompoGen</span>
           </a>

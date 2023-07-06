@@ -1,15 +1,15 @@
 <template>
   <nav class="bg-white fixed w-full z-20 top-0 left-0 border-b border-gray-200">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-      <a href="https://flowbite.com/" class="flex items-center">
-        <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-3" alt="Flowbite Logo">
+      <router-link to="/" class="flex items-center">
+        <img src="../assets/images/logo.png" class="h-9 mr-3" alt="Flowbite Logo">
         <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-900 hidden sm:block">CompoGen</span>
-      </a>
+      </router-link>
       <div class="flex md:order-2">
-        <div v-if="isUserLoggedIn" class="relative">
+        <div v-if="isLoggedIn" class="relative">
           <button @click="toggleDropdown"
             class="text-center px-4 py-3 leading-none border-2 border-violet-600 rounded text-violet-600 md:ml-10 hover:text-white hover:bg-violet-600">
-            Mon compte
+            My Account
           </button>
           <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-lg shadow-xl">
             <router-link class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white"
@@ -42,15 +42,18 @@
         <ul
           class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white">
           <li>
-            <router-link to="/" :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Home' }"
+            <router-link to="/"
+              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Home' }"
               class="block py-2 pl-3 pr-4 rounded md:text-gray-900 md:hover:text-violet-600 md:rounded-none md:bg-transparent md:p-0">Home</router-link>
           </li>
           <li>
-            <router-link to="/generate" :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Generation' }"
+            <router-link to="/generate"
+              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Generation' }"
               class="block py-2 pl-3 pr-4 rounded md:text-gray-900 md:hover:text-violet-600 md:rounded-none md:bg-transparent md:p-0">Generate</router-link>
           </li>
           <li>
-            <router-link to="/explore" :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Exploration' }"
+            <router-link to="/explore"
+              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Exploration' }"
               class="block py-2 pl-3 pr-4 rounded md:text-gray-900 md:hover:text-violet-600 md:rounded-none md:bg-transparent md:p-0">Explore</router-link>
           </li>
         </ul>
@@ -58,13 +61,13 @@
     </div>
   </nav>
 
-
-
-
-  <div v-if="showModal && !isUserLoggedIn" class="fixed inset-0 flex items-center justify-center z-50"
-    @click.self="closeModal">
-    <div
-      class="w-full max-w-md m-5 border-2 border-gray-300 rounded-lg shadow-xl overflow-hidden transform transition-transform duration-300 max-h-100">
+  <div v-if="showModal && !isLoggedIn" class="fixed inset-0 flex items-center justify-center z-50"
+    @click="showModal = false">
+    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+      <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+    </div>
+    <div @click.stop
+      class="w-full max-w-md m-5 rounded-lg shadow-xl overflow-hidden transform transition-transform duration-300 max-h-100">
       <div class="bg-white p-5 rounded-lg shadow-lg overflow-auto">
         <div>
           <h2 class="mt-6 text-center text-3xl font-bold text-violet-600">{{ formType === 'register' ? 'Register' :
@@ -83,8 +86,10 @@
 </template>
   
 <script>
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
+
+import { useToast } from "vue-toastification";
+import LoginForm from './authentication/LoginForm';
+import RegisterForm from './authentication/RegisterForm';
 import { watchEffect, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -102,11 +107,13 @@ export default {
       isOpen: false,
     }
   },
+  // Vérifie si l'utilisateur est bien connecté
   computed: {
-    isUserLoggedIn() {
-      return !!localStorage.getItem('token');
-    }
+    isLoggedIn() {
+      return this.$store.getters['user/isLoggedIn'];
+    },
   },
+  // Détermine la page courante pour styliser les liens de navigation
   setup() {
     const currentPage = ref('')
     const route = useRoute()
@@ -120,9 +127,6 @@ export default {
     }
   },
   methods: {
-    toggleDropdown() {
-      this.showDropdown = !this.showDropdown;
-    },
     toggleModal() {
       this.showModal = !this.showModal;
     },
@@ -132,8 +136,19 @@ export default {
     switchForm() {
       this.formType = this.formType === 'register' ? 'login' : 'register';
     },
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
     logout() {
-      localStorage.removeItem('token');
+      this.$store.dispatch('user/logout')
+        .then(() => {
+          const toast = useToast();
+          toast.success('You have successfully logged off.', {
+            closeOnClick: true,
+            pauseOnHover: true,
+          });
+          this.$router.push('/');
+        });
     }
   },
 }

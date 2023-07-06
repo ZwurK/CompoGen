@@ -1,7 +1,8 @@
-import axios from 'axios';
+import unauthenticatedAxios from "../../config/unauthenticatedAxios";
 
 const state = {
-  token: localStorage.getItem('token') || '',
+  token: localStorage.getItem("token") || "",
+  user: null,
 };
 
 const getters = {
@@ -9,27 +10,37 @@ const getters = {
 };
 
 const actions = {
-  async fetchUserFavorites({ commit, state }) {
-    if (!state.token) {
-      return;
-    }
-    const response = await axios({
-      url: 'http://localhost:3000/api/favorite/getUserFavorites',
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${state.token}`,
-      },
-    });
-    commit('setLikedComponents', response.data.map(component => component._id));
+  async login({ commit }, credentials) {
+    const response = await unauthenticatedAxios.post(
+      "/api/auth/login",
+      credentials
+    );
+    const token = response.data.token;
+    localStorage.setItem("token", token);
+    commit("setToken", token);
+  },
+
+  async register({ commit }, payload) {
+    const response = await unauthenticatedAxios.post(
+      "/api/auth/register",
+      payload
+    );
+    commit("setUser", response.data);
+  },
+
+  async logout({ commit }) {
+    localStorage.removeItem("token");
+    commit("setToken", null);
   },
 };
 
 const mutations = {
-  setLikedComponents: (state, likedComponents) => (state.likedComponents = likedComponents),
+  setToken: (state, token) => (state.token = token),
+  setUser: (state, user) => (state.user = user),
 };
 
 export default {
-    namespaced: true,
+  namespaced: true,
   state,
   getters,
   actions,

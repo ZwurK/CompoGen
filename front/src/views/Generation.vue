@@ -1,176 +1,211 @@
 <template>
-    <section class="mx-auto max-w-7xl px-8 py-12">
-        <h1 class="mb-8 text-4xl font-bold text-pink-400">Generate Component</h1>
-        <div class="md:flex">
-            <div class="md:w-1/4 mb-12 md:mb-0 md:border-r-2 border-gray-200 pr-4">
-                <h2 class="mb-6 text-2xl font-bold text-purple-400">Settings</h2>
-                <form @submit.prevent="generateComponent">
-                    <div class="space-y-4">
-                        <div>
-                            <label for="framework" class="text-lg font-semibold text-purple-500">Framework</label>
-                            <div class="relative mb-4">
-                                <select id="framework" v-model="framework"
-                                    class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent bg-white">
-                                    <option v-for="(framework, index) in frameworks" :key="index">{{ framework }}</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                                    <svg class="fill-current h-4 w-4" viewBox="0 -4.5 20 20" version="1.1"
-                                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                        fill="#000000">
-                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                        <g id="SVGRepo_iconCarrier">
-                                            <title>arrow_down [#338]</title>
-                                            <desc>Created with Sketch.</desc>
-                                            <defs> </defs>
-                                            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                <g id="Dribbble-Light-Preview"
-                                                    transform="translate(-220.000000, -6684.000000)" fill="#000000">
-                                                    <g id="icons" transform="translate(56.000000, 160.000000)">
-                                                        <path
-                                                            d="M164.292308,6524.36583 L164.292308,6524.36583 C163.902564,6524.77071 163.902564,6525.42619 164.292308,6525.83004 L172.555873,6534.39267 C173.33636,6535.20244 174.602528,6535.20244 175.383014,6534.39267 L183.70754,6525.76791 C184.093286,6525.36716 184.098283,6524.71997 183.717533,6524.31405 C183.328789,6523.89985 182.68821,6523.89467 182.29347,6524.30266 L174.676479,6532.19636 C174.285736,6532.60124 173.653152,6532.60124 173.262409,6532.19636 L165.705379,6524.36583 C165.315635,6523.96094 164.683051,6523.96094 164.292308,6524.36583"
-                                                            id="arrow_down-[#338]"> </path>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </svg>
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50" @click="showModal = false">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <div @click.stop
+            class="w-full max-w-md m-5 rounded-lg shadow-xl overflow-hidden transform transition-transform duration-300 max-h-100">
+            <div class="bg-white p-5 rounded-lg shadow-lg overflow-auto">
+                <div>
+                    <h2 class="mt-6 text-center text-3xl font-bold text-violet-600">
+                        Enter your openAI API key</h2>
+                </div>
+                <div class="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+                    <div class="w-full max-w-md space-y-8">
+                        <form @submit.prevent="saveApiKey" class="mt-8 space-y-6">
+                            <div class="rounded-md shadow">
+                                <div class="mt-2">
+                                    <label for="apikey" class="sr-only">Open AI API Key</label>
+                                    <input v-model="apiKey" id="apikey" name="apikey" type="text" required
+                                        class="w-full py-2 px-3 leading-none border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white"
+                                        placeholder="API Key" />
                                 </div>
                             </div>
-                            <label class="text-lg font-semibold text-purple-500">Component Type</label>
-                            <div class="relative">
-                                <select v-model="component"
-                                    class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent bg-white">
-                                    <option v-for="(element, index) in elements" :key="index">{{ element }}</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                                    <svg class="fill-current h-4 w-4" viewBox="0 -4.5 20 20" version="1.1"
-                                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                        fill="#000000">
-                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                        <g id="SVGRepo_iconCarrier">
-                                            <title>arrow_down [#338]</title>
-                                            <desc>Created with Sketch.</desc>
-                                            <defs> </defs>
-                                            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                <g id="Dribbble-Light-Preview"
-                                                    transform="translate(-220.000000, -6684.000000)" fill="#000000">
-                                                    <g id="icons" transform="translate(56.000000, 160.000000)">
-                                                        <path
-                                                            d="M164.292308,6524.36583 L164.292308,6524.36583 C163.902564,6524.77071 163.902564,6525.42619 164.292308,6525.83004 L172.555873,6534.39267 C173.33636,6535.20244 174.602528,6535.20244 175.383014,6534.39267 L183.70754,6525.76791 C184.093286,6525.36716 184.098283,6524.71997 183.717533,6524.31405 C183.328789,6523.89985 182.68821,6523.89467 182.29347,6524.30266 L174.676479,6532.19636 C174.285736,6532.60124 173.653152,6532.60124 173.262409,6532.19636 L165.705379,6524.36583 C165.315635,6523.96094 164.683051,6523.96094 164.292308,6524.36583"
-                                                            id="arrow_down-[#338]"> </path>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </svg>
-                                </div>
+                            <div>
+                                <button type="submit"
+                                    class="w-full text-center mr-1 px-4 py-3 leading-none border rounded text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500">Save
+                                    API key</button>
                             </div>
 
-
-                        </div>
-
-                        <button :disabled="isLoading" type="submit"
-                            class="flex items-center space-x-2 rounded bg-gradient-to-r from-pink-500 to-purple-500 px-4 py-2 text-white hover:from-pink-400 hover:to-purple-400">
-                            <div v-if="isLoading">Loading...</div>
-                            <div class="flex items-center" v-else>
-                                <svg class="h-6 w-6" viewBox="0 0 24.00 24.00" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
-                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                    <g id="SVGRepo_iconCarrier">
-                                        <path
-                                            d="M12.9998 14L9.99985 11M15.0102 3.5V2M18.9495 5.06066L20.0102 4M18.9495 13L20.0102 14.0607M11.0102 5.06066L9.94954 4M20.5102 9H22.0102M6.13122 20.8686L15.3685 11.6314C15.7645 11.2354 15.9625 11.0373 16.0367 10.809C16.1019 10.6082 16.1019 10.3918 16.0367 10.191C15.9625 9.96265 15.7645 9.76465 15.3685 9.36863L14.6312 8.63137C14.2352 8.23535 14.0372 8.03735 13.8089 7.96316C13.608 7.8979 13.3917 7.8979 13.1908 7.96316C12.9625 8.03735 12.7645 8.23535 12.3685 8.63137L3.13122 17.8686C2.7352 18.2646 2.53719 18.4627 2.46301 18.691C2.39775 18.8918 2.39775 19.1082 2.46301 19.309C2.53719 19.5373 2.7352 19.7354 3.13122 20.1314L3.86848 20.8686C4.2645 21.2646 4.4625 21.4627 4.69083 21.5368C4.89168 21.6021 5.10802 21.6021 5.30887 21.5368C5.53719 21.4627 5.7352 21.2646 6.13122 20.8686Z"
-                                            stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                        </path>
-                                    </g>
-                                </svg>
-                                <span>Generate</span>
-                            </div>
-                        </button>
-                        <p v-if="isLoading" class="text-gray-500">Component generation generally takes a minute.</p>
+                        </form>
                     </div>
-                </form>
-            </div>
-            <div class="md:ml-10 md:w-3/4">
-                <h2 class="mb-6 text-2xl font-bold text-purple-400">Preview</h2>
-                <div class="mt-8">
-
-                    <div class="border-b border-gray-200">
-                        <ul class="flex cursor-pointer">
-                            <li @click="tab = 'render'"
-                                :class="{ 'border-b-2 border-purple-500 pb-2 font-bold': isActive('render') }" class="mr-4">
-                                Render
-                            </li>
-                            <li @click="tab = 'code'"
-                                :class="{ 'border-b-2 border-purple-500 pb-2 font-bold': isActive('code') }">
-                                Code
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div v-if="tab === 'render'" class="border-2 border-gray-300 p-4 rounded-md mt-4">
-                        <div v-if="generatedComponent !== ''">
-                            <iframe sandbox="allow-same-origin allow-scripts" :srcdoc="generateSrcDoc()"
-                                style="width: 100%; height: 500px;"></iframe>
-                        </div>
-                        <div v-else>
-                            <p>Aucun composant généré pour le moment.</p>
-                        </div>
-                    </div>
-
-
-                    <div v-else class="relative mt-4">
-                        <textarea v-model="generatedComponent"
-                            class="text-md h-64 w-full resize-none rounded-md bg-opacity-50 px-3 py-2 text-gray-400 placeholder-gray-400 border-2 border-purple-500"
-                            readonly></textarea>
-                        <button @click="copyToClipboard"
-                            class="absolute right-2 bottom-2 bg-purple-500 text-white rounded px-2 py-1 mb-2"><svg
-                                class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <path
-                                        d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15"
-                                        stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                                    </path>
-                                    <path d="M9 12H15" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                                        stroke-linejoin="round"></path>
-                                    <path d="M9 16H12" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
-                                        stroke-linejoin="round"></path>
-                                    <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
-                                        stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                                    </path>
-                                </g>
-                            </svg></button>
-                    </div>
-
                 </div>
             </div>
         </div>
-    </section>
-</template>
+    </div>
 
+    <div v-if="isLoading" class="fixed z-50 inset-0 transition-opacity" aria-hidden="true">
+        <div class="flex items-center justify-center h-screen" style="background-color: rgba(75, 85, 99, 0.75);">
+            <div class="flex flex-col items-center justify-center h-screen">
+                <div class="w-1/4 relative flex flex-col items-center">
+                    <img class="rotating-image" src="../assets/images/logo.png" alt="Image à faire tourner">
+                </div>
+                <p class="text-center text-white mt-10">Please wait, component generation generally takes a minute.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="h-screen md:flex flex-col md:flex-row" style="margin-top: 76px;">
+        <div v-if="!fullscreen"
+            class="w-full h-full md:w-1/3 p-4 overflow-auto md:block hidden border-r-2 border-b-2 md:flex md:flex-col">
+            <h2 class="mb-6 text-3xl font-semibold text-gray-900">Settings</h2>
+            <form @submit.prevent="generateComponent">
+                <div class="space-y-4">
+                    <div>
+                        <label for="framework" class="text-lg font-semibold text-violet-600">Framework</label>
+                        <div class="relative mb-4">
+                            <select id="framework" v-model="framework"
+                                class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white">
+                                <option v-for="(framework, index) in frameworks" :key="index">{{ framework }}</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                                <ChevronIcon />
+                            </div>
+                        </div>
+                        <label class="text-lg font-semibold text-violet-600">Component Type</label>
+                        <div class="relative">
+                            <select v-model="component"
+                                class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white">
+                                <option v-for="(component, index) in components" :key="index">{{ component }}</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                                <ChevronIcon />
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit"
+                        class="flex items-center space-x-2 rounded bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 px-4 py-2 text-white">
+                        <div class="flex items-center">
+                            <span>Generate</span>
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="w-full h-full md:w-2/3 md:h-auto md:flex md:flex-col flex-grow">
+            <div class="flex justify-between border-b-2 border-gray-200 pt-3">
+                <ul class="flex gap-4 ml-4 cursor-pointer items-end">
+                    <li class="md:hidden pb-2" v-if="!fullscreen" @click="tab = 'settings'"
+                        :class="{ 'border-b-2 border-purple-500 text-violet-600': isActive('settings') }">
+                        Settings
+                    </li>
+                    <li class="pb-2" @click="tab = 'render'"
+                        :class="{ 'border-b-2 border-purple-500 text-violet-600': isActive('render') }">
+                        Render
+                    </li>
+                    <li class="pb-2" v-if="!fullscreen" @click="tab = 'code'"
+                        :class="{ 'border-b-2 border-purple-500 text-violet-600': isActive('code') }">
+                        Code
+                    </li>
+                </ul>
+                <div v-if="tab === 'render'" class="flex items-center">
+                    <button type="button"
+                        class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block"
+                        @click="fullscreen = !fullscreen"><svg viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
+                            <path d="M3 3H9V5H5V9H3V3Z" fill="currentColor"></path>
+                            <path d="M3 21H9V19H5V15H3V21Z" fill="currentColor"></path>
+                            <path d="M15 21H21V15H19V19H15V21Z" fill="currentColor"></path>
+                            <path d="M21 3H15V5H19V9H21V3Z" fill="currentColor"></path>
+                        </svg></button>
+                    <button type="button" @click="selectedScreenSize = 'xs'"
+                        :class="{ 'text-gray-800 dark:text-gray-500': selectedScreenSize === 'xs', 'text-gray-600 dark:text-gray-300': selectedScreenSize !== 'xs' }"
+                        class="px-4 text-sm focus:outline-none hidden lg:block"><svg width="8.57142857142857" height="24"
+                            viewBox="0 0 10 28" xmlns="http://www.w3.org/2000/svg" class="block mx-auto mb-1 fill-current">
+                            <path
+                                d="M1.5 12h7a1.5 1.5 0 0 1 1.5 1.5v13A1.5 1.5 0 0 1 8.5 28h-7A1.5 1.5 0 0 1 0 26.5v-13A1.5 1.5 0 0 1 1.5 12zM1 15v10h8V15H1zm4 12.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM4 13v1h2v-1H4z"
+                                fill-rule="evenodd"></path>
+                        </svg>xs</button><button type="button" @click="selectedScreenSize = 'sm'"
+                        :class="{ 'text-gray-800 dark:text-gray-500': selectedScreenSize === 'sm', 'text-gray-600 dark:text-gray-300': selectedScreenSize !== 'sm' }"
+                        class="px-4 text-sm focus:outline-none hidden lg:block"><svg width="11.999999999999998" height="24"
+                            viewBox="0 0 14 28" xmlns="http://www.w3.org/2000/svg" class="block mx-auto mb-1 fill-current">
+                            <path
+                                d="M1.5 6h11A1.5 1.5 0 0 1 14 7.5v19a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 0 26.5v-19A1.5 1.5 0 0 1 1.5 6zM1 9v16h12V9H1zm6 18.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM7 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"
+                                fill-rule="evenodd"></path>
+                        </svg>sm</button><button type="button" @click="selectedScreenSize = 'md'"
+                        :class="{ 'text-gray-800 dark:text-gray-500': selectedScreenSize === 'md', 'text-gray-600 dark:text-gray-300': selectedScreenSize !== 'md' }"
+                        class="px-4 text-sm focus:outline-none hidden lg:block"><svg width="22.28571428571428" height="24"
+                            viewBox="0 0 26 28" xmlns="http://www.w3.org/2000/svg" class="block mx-auto mb-1 fill-current">
+                            <path
+                                d="M26 26.5a1.5 1.5 0 0 1-1.5 1.5h-23A1.5 1.5 0 0 1 0 26.5v-14A1.5 1.5 0 0 1 1.5 11h23a1.5 1.5 0 0 1 1.5 1.5v14zm-3 .5V12H3v15h20zm1.5-6.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-23-.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"
+                                fill-rule="evenodd"></path>
+                        </svg>md</button><button type="button" @click="selectedScreenSize = 'lg'"
+                        :class="{ 'text-gray-800 dark:text-gray-500': selectedScreenSize === 'lg', 'text-gray-600 dark:text-gray-300': selectedScreenSize !== 'lg' }"
+                        class="px-4 text-sm focus:outline-none hidden lg:block"><svg width="32.57142857142856" height="24"
+                            viewBox="0 0 38 28" xmlns="http://www.w3.org/2000/svg" class="block mx-auto mb-1 fill-current">
+                            <path
+                                d="M34 26h4v1c-1.333.667-2.667 1-4 1H4c-1.333 0-2.667-.333-4-1v-1h4V7.5A1.5 1.5 0 0 1 5.5 6h27A1.5 1.5 0 0 1 34 7.5V26zM6 8v18h26V8H6z"
+                                fill-rule="evenodd"></path>
+                        </svg>lg</button><button type="button" @click="selectedScreenSize = 'xl'"
+                        :class="{ 'text-gray-800 dark:text-gray-500': selectedScreenSize === 'xl', 'text-gray-600 dark:text-gray-300': selectedScreenSize !== 'xl' }"
+                        class="px-4 text-sm focus:outline-none hidden lg:block"><svg width="30.85714285714285" height="24"
+                            viewBox="0 0 36 28" xmlns="http://www.w3.org/2000/svg" class="block mx-auto mb-1 fill-current">
+                            <path
+                                d="M20.857 24l.857 3H24v1H12v-1h2.286l.857-3H1.5A1.5 1.5 0 0 1 0 22.5v-21A1.5 1.5 0 0 1 1.5 0h33A1.5 1.5 0 0 1 36 1.5v21a1.5 1.5 0 0 1-1.5 1.5H20.857zM2 2v18h32V2H2z">
+                            </path>
+                        </svg>xl</button>
+                </div>
+                <div v-if="tab === 'code'" class="flex items-center m-2">
+                    <button type="button"
+                        class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block"
+                        @click="copyToClipboard">
+                        <CopyIcon />
+                    </button>
+                </div>
+            </div>
+
+            <div class="h-full overflow-hidden">
+                <div v-if="tab === 'render'" class="border-b-2 w-full h-full flex items-center justify-center"> <iframe
+                        :srcdoc="interpretedCode || defaultComponent" :style="getIframeSize()"></iframe></div>
+
+                <CodeTextarea v-if="tab === 'code' && !fullscreen" :componentCode="generatedComponentCode"
+                    class="w-full h-full overflow-auto focus:outline-none border-b-2" />
+            </div>
+        </div>
+    </div>
+</template>
+  
 <script>
-import axios from 'axios';
+
+import ChevronIcon from '../components/icons/Chevron.vue';
+import CopyIcon from '../components/icons/Copy.vue';
+import CodeTextarea from '../components/CodeTextarea.vue';
+import htmlContent from '../components/defaultComponent.js';
+import { useToast } from "vue-toastification";
+
+import authenticatedAxios from '../config/authenticatedAxios';
 
 export default {
-    name: 'GenerationPage',
+    name: "GenerationPage",
+    components: {
+        ChevronIcon,
+        CodeTextarea,
+        CopyIcon,
+    },
     data() {
         return {
             framework: 'Tailwindcss',
             frameworks: ['Tailwindcss', 'Bootstrap'],
             component: 'Navbar',
+            components: ['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action', 'modals', 'badge', 'header', 'select', 'loader', 'checkbox', 'carousel', 'accordion', 'dropdown'],
             tab: 'render',
-            elements: ['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action', 'modals', 'badge', 'header', 'select', 'loader', 'checkbox', 'carousel', 'accordion', 'dropdown'],
-            generatedComponent: '',
+            generatedComponentCode: '',
             isLoading: false,
-        }
+            defaultComponent: htmlContent,
+            selectedScreenSize: 'xl',
+            fullscreen: false,
+            showModal: false,
+            apiKey: '',
+        };
     },
     computed: {
-
+        interpretedCode() {
+            if (!this.generatedComponentCode) {
+                return this.defaultComponent;
+            }
+            return this.codeInterpreter(this.framework, this.generatedComponentCode);
+        },
         cssLink() {
             /* eslint-disable no-useless-escape */
             return this.framework === 'Bootstrap'
@@ -180,56 +215,77 @@ export default {
         }
     },
     methods: {
+        isActive(tab) {
+            return this.tab === tab;
+        },
+        async saveApiKey() {
+            try {
+                const response = await authenticatedAxios.post('/api/auth/save-api-key', { apiKey: this.apiKey });
+                console.log(response.data);
+                this.showModal = false;
+                const toast = useToast();
+                toast.success('The api key has been successfully saved, you can generate components as you wish.', {
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        },
         async generateComponent() {
             const token = localStorage.getItem('token');
             if (!token) {
-                alert('You must be logged in to generate an element.');
+                const toast = useToast();
+                toast.error('You must be logged in to generate a component.', {
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
                 return;
             }
             if (!this.frameworks.includes(this.framework)) {
-                alert('Invalid framework selected.');
+                const toast = useToast();
+                toast.error('Invalid settings.', {
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
                 return;
             }
             this.isLoading = true;
             try {
-                const response = await axios.post("http://localhost:3000/api/elements/generate",
+                const response = await authenticatedAxios.post("/api/components/generate",
                     {
                         component: this.component,
                         framework: this.framework
                     },
-                    { headers: { Authorization: `Bearer ${token}` } }
                 );
-                this.generatedComponent = response.data.generatedComponent;
+                this.generatedComponentCode = response.data.generatedComponent;
             } catch (error) {
                 console.error(error);
+                if (error.response && error.response.data.message === "You have reached the limit of 10 generated components.") {
+                    this.showModal = true;
+                    const toast = useToast();
+                    toast.error('You have reached the limit of 10 generated components.', {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                }
             } finally {
                 this.isLoading = false;
             }
         },
-        copyToClipboard() {
-            navigator.clipboard.writeText(this.generatedComponent)
-                .then(() => {
-                    // Afficher un message de succès, ou faire quelque chose lorsque la copie réussit
-                    console.log('Copied to clipboard');
-                })
-                .catch(err => {
-                    // Afficher un message d'erreur, ou faire quelque chose lorsque la copie échoue
-                    console.error('Could not copy text: ', err);
-                });
-        },
-        isActive(tab) {
-            return this.tab === tab;
-        },
-        generateSrcDoc() {
+        codeInterpreter(framework, code) {
             /* eslint-disable no-useless-escape */
+            let cssLink = framework === 'Bootstrap'
+                ? '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"><\/script>'
+                : '<script src="https://cdn.tailwindcss.com"><\/script>';
+
             return `<html>
                     <head>
-                        ${this.cssLink}
+                        ${cssLink}
                     </head>
-                    <body>
-                        ${this.generatedComponent}
-                    </body>
-                    <script>
+                    <body style="background-color: #f9fafb;">
+                        ${code}
+                        <script>
                     document.addEventListener('DOMContentLoaded', function() {
                       var links = document.getElementsByTagName('a');
                       for (var i = 0; i < links.length; i++) {
@@ -239,9 +295,55 @@ export default {
                       }
                     });
                   <\/script>
+                    </body>
                 </html>`;
             /* eslint-enable no-useless-escape */
-        }
-    },
-}
+        },
+        getIframeSize() {
+            switch (this.selectedScreenSize) {
+                case 'xs': return { width: '320px', height: '100%' };
+                case 'sm': return { width: '640px', height: '100%' };
+                case 'md': return { width: '768px', height: '100%' };
+                case 'lg': return { width: '1024px', height: '100%' };
+                case 'xl': return { width: '1280px', height: '100%' };
+                default: return { width: '100%', height: '100%' };
+            }
+        },
+        copyToClipboard() {
+            navigator.clipboard.writeText(this.generatedComponentCode)
+                .then(() => {
+                    const toast = useToast();
+                    toast.success('Code copied to clipboard.', {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                    const toast = useToast();
+                    toast.error('An error has occurred.', {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                });
+        },
+    }
+};
 </script>
+  
+<style scoped>
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.rotating-image {
+    animation: rotate 2s infinite linear;
+}
+</style>
+  

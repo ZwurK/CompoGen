@@ -6,23 +6,23 @@
                     <div>
                         <label for="email" class="sr-only">Email</label>
                         <input v-model="email" id="email" name="email" type="email" required
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 text-pink-900 placeholder-pink-400 focus:border-purple-500 focus:ring-purple-500"
+                        class="w-full py-2 px-3 leading-none border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white"
                             placeholder="Email" />
                     </div>
                     <div class="mt-2">
                         <label for="password" class="sr-only">Password</label>
                         <input v-model="password" id="password" name="password" type="password" required
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 text-pink-900 placeholder-pink-400 focus:border-purple-500 focus:ring-purple-500"
+                            class="w-full py-2 px-3 leading-none border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white"
                             placeholder="Password" />
                     </div>
                 </div>
                 <div>
                     <button type="submit"
-                        class="group relative flex w-full justify-center rounded-md border border-transparent bg-gradient-to-r from-pink-500 to-purple-500 px-4 py-2 text-lg font-medium text-white hover:from-pink-400 hover:to-purple-400">Login</button>
+                        class="w-full text-center mr-1 px-4 py-3 leading-none border rounded text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500">Login</button>
                 </div>
 
             </form>
-            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <div class="text-red-500" v-if="errors.length">
                 <ul>
                     <li v-for="(error, index) in errors" :key="index">
                         {{ error.msg }}
@@ -34,7 +34,8 @@
 </template>
     
 <script>
-import axios from '../config/axios';
+
+import { useToast } from "vue-toastification";
 
 export default {
     name: 'LoginForm',
@@ -46,13 +47,18 @@ export default {
         };
     },
     methods: {
+        // Appelle l'action login (les redirections et gestion d'erreurs restent souvent dans le composant)
         login() {
-            axios.post('/api/auth/login', {
+            this.$store.dispatch('user/login', {
                 email: this.email,
                 password: this.password
             })
-                .then(response => {
-                    localStorage.setItem('token', response.data.token);
+                .then(() => {
+                    const toast = useToast();
+                    toast.success('You are now successfully connected!', {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
                     this.$router.push('/profile');
                 })
                 .catch(error => {
@@ -67,7 +73,7 @@ export default {
                     }
                 });
         }
-    }
+    },
 };
 </script>
     

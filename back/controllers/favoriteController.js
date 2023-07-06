@@ -43,18 +43,13 @@ exports.getUserFavorites = async (req, res) => {
             });
         }
 
-        const likedComponentIds = user.likedComponents;
-        
-        const likedComponents = await Component.find({
-            '_id': { $in: likedComponentIds }
-        });
-
-        res.json(likedComponents);
+        res.json(user.likedComponents);
     } catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: 'An error occurred while retrieving the components',
+            message: 'An error occurred while retrieving the favorite components',
         });
     }
 }
+

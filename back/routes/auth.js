@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
 const { body } = require("express-validator");
+const authenticate = require('../middlewares/authenticate');
 
 // Route pour l'inscription
 router.post(
@@ -64,5 +65,7 @@ router.post(
   ],
   authController.resetPassword
 );
+
+router.post('/save-api-key', authenticate, authController.saveApiKey);
 
 module.exports = router;
