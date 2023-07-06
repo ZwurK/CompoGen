@@ -8,13 +8,15 @@ exports.generate = async (req, res) => {
   const user = req.user;
 
   let setApiKey;
-  if (user.apiKey !== "") {
+  if (user.apiKey && user.apiKey !== "") {
     setApiKey = user.apiKey;
-    console.log("1");
+    console.log(typeof setApiKey);
   } else {
     setApiKey = process.env.OPENAI_API_KEY;
-    console.log("2");
+    console.log(typeof setApiKey);
   }
+
+  console.log(setApiKey);
 
   const configuration = new Configuration({
     apiKey: setApiKey,
@@ -53,7 +55,7 @@ exports.generate = async (req, res) => {
     });
 
     // Save the new component to the database
-    await newComponent.save();
+    const savedComponent = await newComponent.save();
 
     // Increment the number of generated components for the user
     req.user.numberGeneration += 1;
@@ -64,6 +66,7 @@ exports.generate = async (req, res) => {
       success: true,
       message: `Component ${component} generated successfully`,
       generatedComponent: generatedText,
+      componentId: savedComponent._id,
     });
   } catch (error) {
     console.error(error);

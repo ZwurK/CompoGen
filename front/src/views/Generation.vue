@@ -105,7 +105,10 @@
                 </ul>
                 <div v-if="tab === 'render'" class="flex items-center">
                     <button type="button"
-                        class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block"
+                        class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block mr-4"
+                        @click="share"><ShareIcon /></button>
+                    <button type="button"
+                        class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block mr-4"
                         @click="fullscreen = !fullscreen"><svg viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
                             <path d="M3 3H9V5H5V9H3V3Z" fill="currentColor"></path>
@@ -174,6 +177,7 @@
 
 import ChevronIcon from '../components/icons/Chevron.vue';
 import CopyIcon from '../components/icons/Copy.vue';
+import ShareIcon from '../components/icons/Share.vue';
 import CodeTextarea from '../components/CodeTextarea.vue';
 import htmlContent from '../components/defaultComponent.js';
 import { useToast } from "vue-toastification";
@@ -186,6 +190,7 @@ export default {
         ChevronIcon,
         CodeTextarea,
         CopyIcon,
+        ShareIcon,
     },
     data() {
         return {
@@ -195,6 +200,7 @@ export default {
             components: ['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action', 'modals', 'badge', 'header', 'select', 'loader', 'checkbox', 'carousel', 'accordion', 'dropdown'],
             tab: 'render',
             generatedComponentCode: '',
+            componentId: null,
             isLoading: false,
             defaultComponent: htmlContent,
             selectedScreenSize: 'xl',
@@ -219,6 +225,32 @@ export default {
         }
     },
     methods: {
+        share() {
+            if(this.componentId === null) {
+                const toast = useToast();
+                toast.error('You must generate a component to share it.', {
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                });
+            } else {
+                navigator.clipboard.writeText('http://localhost:8080/component/' + this.componentId)
+                .then(() => {
+                    const toast = useToast();
+                    toast.success('Link copied to clipboard.', {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                    const toast = useToast();
+                    toast.error('An error has occurred.', {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                });
+            }
+        },
         isActive(tab) {
             return this.tab === tab;
         },
@@ -263,6 +295,7 @@ export default {
                     },
                 );
                 this.generatedComponentCode = response.data.generatedComponent;
+                this.componentId = response.data.componentId;
             } catch (error) {
                 console.error(error);
                 if (error.response && (error.response.data.message === "You have reached the limit of 10 generated components." || "Invalid API key.")) {
