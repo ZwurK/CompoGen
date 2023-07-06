@@ -261,10 +261,17 @@ export default {
                 this.generatedComponentCode = response.data.generatedComponent;
             } catch (error) {
                 console.error(error);
-                if (error.response && error.response.data.message === "You have reached the limit of 10 generated components.") {
+                if (error.response && (error.response.data.message === "You have reached the limit of 10 generated components." || "Invalid API key.")) {
                     this.showModal = true;
                     const toast = useToast();
-                    toast.error('You have reached the limit of 10 generated components.', {
+                    toast.error(error.response.data.message, {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                } else {
+                    const toast = useToast();
+                    const message = error.response ? error.response.data.message : 'An error occurred while generating the component';
+                    toast.error(message, {
                         closeOnClick: true,
                         pauseOnHover: true,
                     });

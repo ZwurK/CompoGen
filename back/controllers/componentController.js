@@ -2,14 +2,24 @@ const { Configuration, OpenAIApi } = require("openai");
 const Component = require("../models/Component");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-
 exports.generate = async (req, res) => {
   const component = req.body.component;
   const framework = req.body.framework;
+  const user = req.user;
+
+  let setApiKey;
+  if (user.apiKey !== "") {
+    setApiKey = user.apiKey;
+    console.log("1");
+  } else {
+    setApiKey = process.env.OPENAI_API_KEY;
+    console.log("2");
+  }
+
+  const configuration = new Configuration({
+    apiKey: setApiKey,
+  });
+  const openai = new OpenAIApi(configuration);
 
   // Check if the user has reached the limit of generated components
   if (req.user.numberGeneration >= 10) {
@@ -57,10 +67,40 @@ exports.generate = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while generating the component",
-    });
+    if (error.response) {
+      switch (error.response.status) {
+        case 401:
+          return res.status(401).json({
+            success: false,
+            message: "Invalid API key.",
+          });
+        case 429:
+          return res.status(429).json({
+            success: false,
+            message: "Rate limit reached or quota exceeded.",
+          });
+        case 500:
+          return res.status(500).json({
+            success: false,
+            message: "Server error on OpenAI's side.",
+          });
+        case 503:
+          return res.status(503).json({
+            success: false,
+            message: "OpenAI's servers are currently overloaded.",
+          });
+        default:
+          return res.status(500).json({
+            success: false,
+            message: "An unknown error occurred while generating the component",
+          });
+      }
+    } else {
+      res.status(500).json({
+        success: false,
+        message: "An error occurred while generating the component",
+      });
+    }
   }
 };
 
