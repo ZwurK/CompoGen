@@ -52,8 +52,15 @@
     <div class="h-screen md:flex flex-col md:flex-row" style="margin-top: 76px;">
         <div v-if="!fullscreen"
             class="w-full h-full md:w-1/3 p-4 overflow-auto md:block hidden border-r-2 border-b-2 md:flex md:flex-col">
-            <h2 class="mb-6 text-3xl font-semibold text-gray-900">Settings</h2>
-            <form @submit.prevent="generateComponent">
+            <div class="flex align-center justify-between">
+                <h2 class="text-3xl font-semibold text-gray-900 mt-3">Settings</h2>
+                <label for="Toggle3" class="inline-flex items-center p-2 rounded-md cursor-pointer text-gray-100 mb-4">
+                    <input id="Toggle3" type="checkbox" class="hidden peer" v-model="customPrompt">
+                    <span class="px-4 py-2 rounded-l-md bg-violet-600 peer-checked:bg-gray-700">Settings</span>
+                    <span class="px-4 py-2 rounded-r-md bg-gray-700 peer-checked:bg-violet-600">Custom prompt</span>
+                </label>
+            </div>
+            <form @submit.prevent="generateComponent(false)" v-if="!this.customPrompt">
                 <div class="space-y-4">
                     <div>
                         <label for="framework" class="text-lg font-semibold text-violet-600">Framework</label>
@@ -67,13 +74,45 @@
                             </div>
                         </div>
                         <label class="text-lg font-semibold text-violet-600">Component Type</label>
-                        <div class="relative">
+                        <div class="relative mb-4">
                             <select v-model="component"
                                 class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white">
-                                <option v-for="(component, index) in components" :key="index">{{ component }}</option>
+                                <option v-for="(component, index) in components" :key="index">{{ component }}
+                                </option>
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                 <ChevronIcon />
+                            </div>
+                        </div>
+
+                        <label class="text-lg font-semibold text-violet-600">Style</label>
+                        <div class="relative mb-4">
+                            <select v-model="style"
+                                class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white">
+                                <option v-for="(style, index) in styles" :key="index">{{ style }}
+                                </option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                                <ChevronIcon />
+                            </div>
+                        </div>
+
+
+                        <div class="flex items-center justify-between mx-16">
+                            <div>
+                                <label for="primary-color" class="text-lg font-semibold text-violet-600">Primary
+                                    Color</label>
+                                <div class="relative">
+                                    <input id="primary-color" v-model="primaryColor" type="color">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="secondary-color" class="text-lg font-semibold text-violet-600">Secondary
+                                    Color</label>
+                                <div class="relative">
+                                    <input id="secondary-color" v-model="secondaryColor" type="color">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -84,6 +123,18 @@
                         </div>
                     </button>
                 </div>
+            </form>
+            <form @submit.prevent="generateComponent(true)" v-else>
+                <label for="secondary-color" class="text-lg font-semibold text-violet-600">Custom prompt</label>
+                <textarea
+                    class="mb-4 block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white"
+                    type="text" v-model="prompt"></textarea>
+                <button type="submit"
+                    class="flex items-center space-x-2 rounded bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 px-4 py-2 text-white">
+                    <div class="flex items-center">
+                        <span>Generate</span>
+                    </div>
+                </button>
             </form>
         </div>
 
@@ -106,7 +157,9 @@
                 <div v-if="tab === 'render'" class="flex items-center">
                     <button type="button"
                         class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block mr-4"
-                        @click="share"><ShareIcon /></button>
+                        @click="share">
+                        <ShareIcon />
+                    </button>
                     <button type="button"
                         class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block mr-4"
                         @click="fullscreen = !fullscreen"><svg viewBox="0 0 24 24" fill="none"
@@ -197,7 +250,11 @@ export default {
             framework: 'Tailwindcss',
             frameworks: ['Tailwindcss', 'Bootstrap'],
             component: 'Navbar',
-            components: ['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action', 'modals', 'badge', 'header', 'select', 'loader', 'checkbox', 'carousel', 'accordion', 'dropdown'],
+            components: ['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action', 'modals', 'badge', 'header', 'select', 'loader', 'checkbox', 'carousel', 'accordion', 'dropdown', 'breadcrumb', 'sidebar'],
+            style: 'Modern',
+            styles: ['Modern', 'Classic', 'Minimalist', 'Flat', 'Material', 'Neumorphism', 'Skeuomorphism', 'Vintage', 'Brutalist', 'Cartoonish', 'Retro'],
+            primaryColor: '#7c3aed',
+            secondaryColor: '#d1d5db',
             tab: 'render',
             generatedComponentCode: '',
             componentId: null,
@@ -207,6 +264,8 @@ export default {
             fullscreen: false,
             showModal: false,
             apiKey: '',
+            customPrompt: false,
+            prompt: '',
         };
     },
     computed: {
@@ -222,11 +281,14 @@ export default {
                 ? '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"><\/script>'
                 : '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">';
             /* eslint-enable no-useless-escape */
+        },
+        generationType() {
+            return this.customPrompt ? 'custom' : 'supported';
         }
     },
     methods: {
         share() {
-            if(this.componentId === null) {
+            if (this.componentId === null) {
                 const toast = useToast();
                 toast.error('You must generate a component to share it.', {
                     closeOnClick: true,
@@ -234,21 +296,21 @@ export default {
                 });
             } else {
                 navigator.clipboard.writeText('http://localhost:8080/component/' + this.componentId)
-                .then(() => {
-                    const toast = useToast();
-                    toast.success('Link copied to clipboard.', {
-                        closeOnClick: true,
-                        pauseOnHover: true,
+                    .then(() => {
+                        const toast = useToast();
+                        toast.success('Link copied to clipboard.', {
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                        });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        const toast = useToast();
+                        toast.error('An error has occurred.', {
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                        });
                     });
-                })
-                .catch(error => {
-                    console.log(error);
-                    const toast = useToast();
-                    toast.error('An error has occurred.', {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                });
             }
         },
         isActive(tab) {
@@ -268,7 +330,8 @@ export default {
                 console.error(error);
             }
         },
-        async generateComponent() {
+        async generateComponent(customPrompt) {
+
             const token = localStorage.getItem('token');
             if (!token) {
                 const toast = useToast();
@@ -287,11 +350,13 @@ export default {
                 return;
             }
             this.isLoading = true;
-            try {
+
+            if(customPrompt === true) {
+
+                try {
                 const response = await authenticatedAxios.post("/api/components/generate",
                     {
-                        component: this.component,
-                        framework: this.framework
+                        prompt: this.prompt
                     },
                 );
                 this.generatedComponentCode = response.data.generatedComponent;
@@ -315,6 +380,41 @@ export default {
                 }
             } finally {
                 this.isLoading = false;
+            }
+
+            } else {
+                try {
+                const response = await authenticatedAxios.post("/api/components/generate",
+                    {
+                        component: this.component,
+                        framework: this.framework,
+                        style: this.style,
+                        primaryColor: this.primaryColor,
+                        secondaryColor: this.secondaryColor
+                    },
+                );
+                this.generatedComponentCode = response.data.generatedComponent;
+                this.componentId = response.data.componentId;
+            } catch (error) {
+                console.error(error);
+                if (error.response && (error.response.data.message === "You have reached the limit of 10 generated components." || "Invalid API key.")) {
+                    this.showModal = true;
+                    const toast = useToast();
+                    toast.error(error.response.data.message, {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                } else {
+                    const toast = useToast();
+                    const message = error.response ? error.response.data.message : 'An error occurred while generating the component';
+                    toast.error(message, {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                }
+            } finally {
+                this.isLoading = false;
+            }
             }
         },
         codeInterpreter(framework, code) {

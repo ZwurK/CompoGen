@@ -3,8 +3,26 @@ const Component = require("../models/Component");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
 exports.generate = async (req, res) => {
-  const component = req.body.component;
-  const framework = req.body.framework;
+  let prompt, component, framework, style, primaryColor, secondaryColor;
+
+  if (req.body.prompt && req.body.prompt != "") {
+    component = 'custom';
+    framework = 'custom';
+    style = 'custom';
+    primaryColor = 'custom';
+    secondaryColor = 'custom';
+    prompt = req.body.prompt;
+  } else {
+    component = req.body.component;
+    framework = req.body.framework;
+    style = req.body.style;
+    primaryColor = req.body.primaryColor;
+    secondaryColor = req.body.secondaryColor;
+    prompt = `Design a visually stunning, one-of-a-kind, highly innovative, adaptable to different devices, and easy to navigate ${component} component using ${framework} with a ${style} style.`;
+  }
+
+  console.log(prompt);
+
   const user = req.user;
 
   let setApiKey;
@@ -24,15 +42,12 @@ exports.generate = async (req, res) => {
   const openai = new OpenAIApi(configuration);
 
   // Check if the user has reached the limit of generated components
-  if (req.user.numberGeneration >= 10) {
+  if (req.user.numberGeneration >= 10 && !user.apiKey && user.apiKey == "") {
     return res.status(400).json({
       success: false,
       message: "You have reached the limit of 10 generated components.",
     });
   }
-
-  // Define the prompt for the AI model
-  const prompt = `Create a visually stunning, one-of-a-kind ${component} that is highly innovative, adaptable to different devices, and easy to navigate using only html and ${framework}.`;
 
   try {
     // Make the API call to OpenAI
@@ -40,7 +55,7 @@ exports.generate = async (req, res) => {
       model: "text-davinci-003",
       prompt: prompt,
       temperature: 1,
-      max_tokens: 1000,
+      max_tokens: 2000,
       top_p: 1,
     });
 
