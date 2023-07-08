@@ -75,6 +75,10 @@ exports.generate = async (req, res) => {
 
     // Increment the number of generated components for the user
     req.user.numberGeneration += 1;
+
+    // User history of generated component
+    req.user.generatedComponents.push(savedComponent._id);
+
     await req.user.save();
 
     // Send the generated text in the HTTP response
