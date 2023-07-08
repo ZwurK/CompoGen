@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const articleController = require("../controllers/articleController");
+const articleController = require("../controllers/articleControllers");
 
 // Create a new Article
 router.post("/create", articleController.create);

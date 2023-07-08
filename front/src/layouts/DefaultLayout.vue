@@ -1,7 +1,7 @@
 <template>
     <div>
         <NavbarWhite />
-        <main><router-view /></main>
+        <main class="px-4 sm:px-5 lg:px-10 max-w-screen-xl mx-auto"><router-view /></main>
         <FooterWhite/>
         <ContactForm />
     </div>
