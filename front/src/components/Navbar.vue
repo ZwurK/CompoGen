@@ -1,6 +1,6 @@
 <template>
   <nav class="bg-white fixed w-full z-20 top-0 left-0 border-b border-gray-200">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-4 px-4 sm:px-5 lg:px-10 ">
       <router-link to="/" class="flex items-center">
         <img src="../assets/images/logo.png" class="h-9 mr-3" alt="Flowbite Logo">
         <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-900 hidden sm:block">CompoGen</span>

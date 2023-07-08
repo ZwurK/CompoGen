@@ -1,31 +1,29 @@
 <template>
-    <section class="mt-40 bg-white flex flex-wrap lg:flex-nowrap justify-center">
-        <div class="px-12 mx-auto max-w-7xl mt-20">
-            <div class="w-full mx-auto text-left md:w-11/12 xl:w-9/12 md:text-center">
-                <h1
-                    class="mb-8 text-4xl font-extrabold leading-none tracking-normal text-gray-900 md:text-6xl md:tracking-tight">
-                    <span>Looking for</span> <span
-                        class="block w-full py-2 text-transparent bg-clip-text leading-12 bg-gradient-to-r from-violet-600 to-indigo-600 lg:inline">the
-                        perfect </span><span>web component?</span>
-                </h1>
-                <p class="px-0 mb-8 text-lg text-gray-600 md:text-xl lg:px-24">
-                    Browse through thousands of ready-to-use components and generate your own using AI.
-                </p>
-                <div class="mb-4 space-x-0 md:space-x-2 md:mb-8">
-                    <router-link to="/generate"
-                        class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-2xl sm:w-auto sm:mb-0">
-                        Get Started
-                        <ArrowRightIcon />
-                    </router-link>
-                    <router-link to="/"
-                        class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg bg-gray-200 hover:bg-gray-100 rounded-2xl sm:w-auto sm:mb-0">
-                        Learn More
-                        <LightIcon />
-                    </router-link>
-                </div>
+    <section class="relative h-screen max-h-[1024px] flex items-center">
+        <div class="flex-1 flex flex-col justify-center max-w-3xl">
+            <h1
+                class="mb-4 sm:mb-8 text-5xl font-extrabold leading-none tracking-normal text-gray-900 md:text-6xl md:tracking-tight">
+                <span>Looking for</span> <span
+                    class="block w-full py-2 text-transparent bg-clip-text leading-12 bg-gradient-to-r from-violet-600 to-indigo-600 lg:inline">the
+                    perfect </span><span>web component?</span>
+            </h1>
+            <p class="px-0 mb-4 sm:mb-8 text-base text-gray-600 md:text-xl">
+                Browse through thousands of ready-to-use components and generate your own using AI.
+            </p>
+            <div class="mb-4 space-x-0 md:space-x-2 md:mb-8">
+                <router-link to="/generate"
+                    class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-2xl sm:w-auto sm:mb-0">
+                    Get Started
+                    <ArrowRightIcon />
+                </router-link>
+                <router-link to="/"
+                    class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg bg-gray-200 hover:bg-gray-100 rounded-2xl sm:w-auto sm:mb-0">
+                    Learn More
+                    <LightIcon />
+                </router-link>
             </div>
         </div>
-        <div class="w-1/2">
+        <div class="absolute -z-10 bottom-0 right-0 max-w-3xl">
             <img src="../assets/images/landing.png" />
         </div>
     </section>
