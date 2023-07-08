@@ -4,7 +4,10 @@ const authenticate = require("../middlewares/authenticate");
 const componentController = require('../controllers/componentController');
 
 router.post('/generate', authenticate,componentController.generate);
+
 router.get('/getUserHistory', authenticate,componentController.getUserHistory);
+
+
 router.get('/explore',componentController.explore);
 router.get('/getOneComponent/:id', componentController.getOneComponent);
 
