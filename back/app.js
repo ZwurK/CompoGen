@@ -3,12 +3,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 const app = express();
-const userRoutes = require('./routes/auth');
-const profileRoutes = require('./routes/profile');
-const componentRoutes = require('./routes/component');
-const contactRoutes = require("./routes/contact");
-const newsletterRoutes = require("./routes/newsletter");
-const favoriteRoutes = require("./routes/favorite");
+const userRoutes = require('./app/routes/auth');
+const profileRoutes = require('./app/routes/profile');
+const componentRoutes = require('./app/routes/component');
+const contactRoutes = require("./app/routes/contact");
+const newsletterRoutes = require("./app/routes/newsletter");
+const favoriteRoutes = require("./app/routes/favorite");
+const articleRoutes = require("./blog/routes/article");
 
 app.use(cors({
   origin: 'http://localhost:8080',
@@ -17,12 +18,18 @@ app.use(cors({
 
 app.use(express.json());
 
+// App
+
 app.use('/api/auth', userRoutes);
 app.use('/api/favorite', favoriteRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/components', componentRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/newsletter", newsletterRoutes);
+
+// Blog
+
+app.use('/api/article', articleRoutes);
 
 app.use(function (err, req, res, next) {
   console.error(err.stack)
