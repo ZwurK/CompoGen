@@ -6,11 +6,11 @@ exports.generate = async (req, res) => {
   let prompt, component, framework, style, primaryColor, secondaryColor;
 
   if (req.body.prompt && req.body.prompt != "") {
-    component = 'custom';
-    framework = 'custom';
-    style = 'custom';
-    primaryColor = 'custom';
-    secondaryColor = 'custom';
+    component = "custom";
+    framework = "custom";
+    style = "custom";
+    primaryColor = "custom";
+    secondaryColor = "custom";
     prompt = req.body.prompt;
   } else {
     component = req.body.component;
@@ -198,6 +198,26 @@ exports.top = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "An error occurred while retrieving the top components",
+    });
+  }
+};
+
+exports.getUserHistory = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json(user.generatedComponents);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving the history of generated components.",
     });
   }
 };
