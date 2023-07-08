@@ -29,7 +29,7 @@ app.use(function (err, req, res, next) {
   res.status(500).send('Something broke!')
 })
 
-mongoose.connect('mongodb://127.0.0.1:27017/CompoGen', {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000 
