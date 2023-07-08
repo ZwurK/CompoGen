@@ -18,7 +18,7 @@ exports.generate = async (req, res) => {
     style = req.body.style;
     primaryColor = req.body.primaryColor;
     secondaryColor = req.body.secondaryColor;
-    prompt = `Design a visually stunning, one-of-a-kind, highly innovative, adaptable to different devices, and easy to navigate ${component} component using ${framework} with a ${style} style.`;
+    prompt = `Generate a visually stunning, one-of-a-kind, highly innovative, adaptable to different devices, and easy to navigate ${component} component using ${framework} with a ${style} style.`;
   }
 
   console.log(prompt);
@@ -67,6 +67,7 @@ exports.generate = async (req, res) => {
       type: component,
       framework: framework,
       code: generatedText,
+      prompt: prompt,
     });
 
     // Save the new component to the database

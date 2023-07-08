@@ -5,6 +5,7 @@ const ComponentSchema = new mongoose.Schema({
   type: { type: String, required: true },
   framework: { type: String, required: true },
   code: { type: String, required: true },
+  prompt: { type: String, required: true },
   likes: {
     type: Number,
     default: 0,
