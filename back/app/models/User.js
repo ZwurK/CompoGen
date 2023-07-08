@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Component'
   }],
+  generatedComponents: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Component'
+  }],
   numberGeneration: {
     type: Number,
     default: 0,
