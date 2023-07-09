@@ -1,0 +1,179 @@
+<template>
+    <section class="relative h-screen max-h-[1024px] flex items-center">
+        <div class="flex-1 flex flex-col justify-center max-w-3xl">
+            <h1
+                class="mb-4 sm:mb-8 text-5xl font-extrabold leading-none tracking-normal text-gray-900 md:text-6xl md:tracking-tight">
+                <span>Looking for</span> <span
+                    class="block w-full py-2 text-transparent bg-clip-text leading-12 bg-gradient-to-r from-violet-600 to-indigo-600 lg:inline">the
+                    perfect </span><span>web component?</span>
+            </h1>
+            <p class="px-0 mb-4 sm:mb-8 text-base text-gray-600 md:text-xl">
+                Browse through thousands of ready-to-use components and generate your own using AI.
+            </p>
+            <div class="mb-4 space-x-0 md:space-x-2 md:mb-8">
+                <router-link to="/generate"
+                    class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-2xl sm:w-auto sm:mb-0">
+                    Get Started
+                    <IconArrowRight />
+                </router-link>
+                <router-link to="/"
+                    class="inline-flex items-center justify-center w-full px-6 py-3 mb-2 text-lg bg-gray-200 hover:bg-gray-100 rounded-2xl sm:w-auto sm:mb-0">
+                    Learn More
+                    <IconLight />
+                </router-link>
+            </div>
+        </div>
+        <div class="absolute -z-10 bottom-0 right-0 max-w-3xl">
+            <img src="/images/landing.png" />
+        </div>
+    </section>
+
+    <section class="w-full overflow-hidden bg-white mt-40">
+        <div class="flex justify-between mb-8 items-center">
+            <h2
+                class="flex-1 text-left md:text-center text-4xl font-extrabold leading-none tracking-normal text-gray-900 md:tracking-tight">
+                <span
+                    class="inline w-full py-2 text-transparent bg-clip-text leading-12 bg-gradient-to-r from-violet-600 to-indigo-600 lg:inline">Featured
+                </span>
+                <span>components</span>
+            </h2>
+            <div class="mt-4 me-10 space-x-4">
+                <button @click="scroll(-100)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    class="w-6 h-6 text-gray-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <button @click="scroll(100)"
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    class="w-6 h-6 text-gray-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            </div>
+        </div>
+
+        <div class="relative">
+            <div class="flex gap-3 overflow-x-scroll hide-scrollbar" ref="scroller">
+                <ComponentCard class="flex-1 min-w-[360px]" v-for="component in topComponents"
+                    :key="component.id" :component="component" />
+            </div>
+        </div>
+    </section>
+
+
+    <div class="mx-auto max-w-7xl mt-24">
+        <div class="w-full mx-auto text-center md:w-11/12 xl:w-9/12">
+            <h2 class="mb-4 text-2xl font-extrabold leading-none tracking-normal text-gray-900 md:text-4xl">
+                Stay Connected
+            </h2>
+            <p class="px-0 mb-4 text-lg text-gray-600 md:text-xl lg:px-24">
+                Subscribe to our newsletter for updates and new components.
+            </p>
+            <form @submit.prevent="subscribe" class="mb-4 space-x-0 md:space-x-2 md:mb-8">
+                <input v-model="email" type="email"
+                    class="sm:w-fit w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded-2xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white"
+                    placeholder="Enter your email" required />
+                <button
+                    class="inline-flex items-center justify-center w-full px-6 py-3 text-lg text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-2xl sm:w-auto">
+                    Subscribe
+                    <IconArrowRight />
+                </button>
+            </form>
+        </div>
+    </div>
+</template>
+  
+<script>
+
+import { useToast } from "vue-toastification";
+import { mapGetters } from 'vuex';
+
+export default {
+    name: "HomePage",
+    data() {
+        return {
+            topComponents: [],
+            email: "",
+        };
+    },
+    computed: {
+        ...mapGetters('user', ['isLoggedIn']),
+    },
+    async created() {
+        this.fetchTopComponents();
+    },
+    methods: {
+        scroll(direction) {
+            const container = this.$refs.scroller;
+            const maxScrollWidth = container.scrollWidth - container.clientWidth / 2 - container.clientWidth / 2;
+
+            if (maxScrollWidth !== 0) {
+                let scrollAmount = 0;
+                const slideTimer = setInterval(() => {
+                    container.scrollLeft += direction * 10;
+                    scrollAmount += 10;
+                    if (scrollAmount >= 10) {
+                        clearInterval(slideTimer);
+                    }
+                });
+            }
+        },
+        async fetchTopComponents() {
+            if (this.isLoggedIn) {
+                await this.$store.dispatch("favorite/fetchUserFavorites"); // Permet de charger les favoris de l'utilisateur avant les composants pour éviter les bugs
+            }
+            unauthenticatedAxios.get("/api/components/top")
+                .then(response => {
+                    this.topComponents = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        subscribe() {
+            unauthenticatedAxios.post("/api/newsletter/subscribe", { email: this.email })
+                .then(response => {
+                    console.log(response);
+                    this.email = "";
+                    const toast = useToast();
+                    toast.success('You have subscribed to the newsletter.', {
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                    if (error.response) {
+                        const toast = useToast();
+                        toast.error(`Error: ${error.response.data.errors[0].msg}`, {
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                        });
+                    } else {
+                        const toast = useToast();
+                        toast.error(`Error: An unexpected error has occurred.`, {
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                        });
+                    }
+                });
+        },
+
+    },
+};
+</script>
+
+<style>
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
+</style>
+  
