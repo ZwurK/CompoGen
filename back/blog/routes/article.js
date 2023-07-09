@@ -1,6 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const articleController = require("../controllers/articleController");
+const authenticate = require("../../auth/middlewares/authenticate");
+const admin = require("../../auth/middlewares/admin");
+
+// Authenticate middleware
+router.use(authenticate);
+
+// Admin middleware
+router.use(admin);
 
 // Create a new Article
 router.post("/create", articleController.create);
