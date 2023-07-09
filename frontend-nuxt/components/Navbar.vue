@@ -6,7 +6,7 @@
         <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-900 hidden sm:block">CompoGen</span>
       </router-link>
       <div class="flex md:order-2">
-        <div v-if="this.$store.isLoggedIn" class="relative">
+        <div v-if="isLoggedIn" class="relative">
           <button @click="toggleDropdown"
             class="text-center px-4 py-3 leading-none border-2 border-violet-600 rounded text-violet-600 md:ml-10 hover:text-white hover:bg-violet-600">
             My Account
@@ -87,8 +87,9 @@
 
 <script setup>
 import { useToast } from "vue-toastification";
-import { watchEffect, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { watchEffect, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 
 const showModal = ref(false);
 const formType = ref('login');
@@ -96,7 +97,10 @@ const showDropdown = ref(false);
 const isOpen = ref(false);
 
 const currentPage = ref('');
-const route = useRoute();
+const store = useStore()
+const route = useRoute()
+
+const isLoggedIn = computed(() => store.getters['user/isLoggedIn'])
 
 watchEffect(() => {
   currentPage.value = route.name;
