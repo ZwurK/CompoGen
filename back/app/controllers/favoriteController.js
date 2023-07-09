@@ -1,5 +1,5 @@
 const Component = require("../models/Component");
-const User = require("../models/User");
+const User = require("../../auth/models/User");
 
 exports.like = async (req, res) => {
     const { id } = req.params;

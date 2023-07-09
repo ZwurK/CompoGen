@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const authenticate = require("../middlewares/authenticate");
+const authenticate = require("../../auth/middlewares/authenticate");
 const favoriteController = require('../controllers/favoriteController');
 
 router.put('/like/:id', authenticate, favoriteController.like);
