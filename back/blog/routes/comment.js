@@ -2,13 +2,9 @@ const express = require('express');
 const router = express.Router();
 const commentController = require('../controllers/commentController');
 const authenticate = require("../../auth/middlewares/authenticate");
-const admin = require("../../auth/middlewares/admin");
 
 // Authenticate middleware
 router.use(authenticate);
-
-// Admin middleware
-router.use(admin);
 
 // Create a new Comment
 router.post("/create", commentController.create);
