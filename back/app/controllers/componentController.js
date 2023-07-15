@@ -18,7 +18,23 @@ exports.generate = async (req, res) => {
     style = req.body.style;
     primaryColor = req.body.primaryColor;
     secondaryColor = req.body.secondaryColor;
-    prompt = `Generate a visually stunning, one-of-a-kind, highly innovative, adaptable to different devices, and easy to navigate ${component} component using ${framework} with a ${style} style.`;
+    
+    const basedPromptExample = `You are a senior expert in web development, modifies the ${component}'s class attribute with ${framework} classes to make it ${style}.`;
+    
+    switch (component) {
+      case "table":
+        prompt = basedPromptExample + "<input class='' placeholder='search...'>";
+        break;
+      case "button":
+        prompt = basedPromptExample + "<button class=''>Click Me !</button>";
+        break;
+      case "input":
+        prompt = basedPromptExample + "<input class='' placeholder='search...'>";
+        break;
+      default:
+        prompt = `Generate a ${component} component using ${framework} with a ${style} style. The component should be responsive, easy to navigate, and adaptable to different devices.`;
+    }
+    
   }
 
   console.log(prompt);
@@ -217,7 +233,8 @@ exports.getUserHistory = async (req, res) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: "An error occurred while retrieving the history of generated components.",
+      message:
+        "An error occurred while retrieving the history of generated components.",
     });
   }
 };
