@@ -1,9 +1,9 @@
-// import unauthenticatedAxios from "../../config/unauthenticatedAxios";
+import { useCookie } from '#app'
 
-const state = {
-  token: process.client ? localStorage.getItem("token") || "" : "",
+const state = () => ({
+  token: "",
   user: null,
-};
+});
 
 const getters = {
   isLoggedIn: (state) => !!state.token,
@@ -16,9 +16,8 @@ const actions = {
       credentials
     );
     const token = response.data.token;
-    if (process.client) {
-      localStorage.setItem("token", token);
-    }
+    const cookie = useCookie('token');
+    cookie.value = token;
     commit("setToken", token);
   },
 
@@ -31,7 +30,8 @@ const actions = {
   },
 
   async logout({ commit }) {
-    localStorage.removeItem("token");
+    const cookie = useCookie('token');
+    cookie.value = null;
     commit("setToken", null);
   },
 };

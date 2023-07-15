@@ -17,11 +17,11 @@
               Favorites</router-link>
             <router-link class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white" to="/profile">
               Settings</router-link>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white"
+            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white"
               @click="logout">Logout</a>
           </div>
         </div>
-        <a v-else @click="toggleModal" href="#"
+        <a v-else @click="toggleModal"
           class="text-center mr-1 px-4 py-3 leading-none border rounded text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500">
           Get Started
         </a>
@@ -76,7 +76,7 @@
         </div>
         <LoginForm v-if="formType === 'login'" @switchForm="switchForm"></LoginForm>
         <RegisterForm v-else @switchForm="switchForm"></RegisterForm>
-        <p>{{ formType === 'register' ? 'Already have an account?' : 'No account yet?' }} <a @click="switchForm" href="#"
+        <p>{{ formType === 'register' ? 'Already have an account?' : 'No account yet?' }} <a @click="switchForm"
             class="text-lg text-violet-600 hover:text-purple-500 font-semibold">{{ formType === 'register' ? 'Login' :
               'Register' }}</a>
         </p>
