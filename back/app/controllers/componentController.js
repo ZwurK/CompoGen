@@ -18,23 +18,115 @@ exports.generate = async (req, res) => {
     style = req.body.style;
     primaryColor = req.body.primaryColor;
     secondaryColor = req.body.secondaryColor;
-    
+
     const basedPromptExample = `You are a senior expert in web development, modifies the ${component}'s class attribute with ${framework} classes to make it ${style}.`;
-    
+    const basedPrompt = `You are a senior expert in web development, generates ${component} using ${framework} classes to make it ${style}.`;
+
     switch (component) {
+      case "card":
+        prompt =
+          basedPrompt +
+          "The card should include an image at the top, a title, a short description, and a 'Learn More' button at the bottom. It should have a shadow effect to give a 3D look.";
+        break;
+      case "alert":
+        prompt =
+          basedPrompt +
+          "The alert should include an icon indicating the type of alert (success, warning, error, info), a short message, and a 'Dismiss' button. It should be noticeable and should disappear after a few seconds.";
+        break;
+      case "pricing":
+        prompt =
+          basedPrompt +
+          "The pricing section should include three different pricing tiers - Basic, Premium, and Pro. Each tier should include a list of features, the price, and a 'Choose Plan' button.";
+        break;
+      case "header":
+        prompt =
+          basedPrompt +
+          "The header should include a logo on the left, links to 'Home', 'About', 'Services', 'Contact' pages, and a 'Sign In' button on the right. It should be fixed at the top of the page and remain visible when scrolling.";
+        break;
+      case "call to action":
+        prompt =
+          basedPrompt +
+          "The call to action section should include a catchy headline, a short description, and a 'Get Started' button. It should be visually striking to attract user attention.";
+        break;
+      case "hero section":
+        prompt =
+          basedPrompt +
+          "The hero section should include a large, eye-catching image or background video, a bold headline, a short description, and a 'Learn More' button. It should be the first thing users see when they visit the website.";
+        break;
+      case "form":
+        prompt =
+          basedPrompt +
+          "The form should include a title, fields for the user's email and password, a 'Remember me' checkbox, and a 'Log In' button. It should also include a 'Forgot password?' link and a 'Create account' link.";
+        break;
+      case "footer":
+        prompt =
+          basedPrompt +
+          "The footer should include a copyright notice on the left, links to 'Privacy Policy', 'Terms of Service', and 'Contact Us' pages in the middle, and social media icons on the right.";
+        break;
+      case "navbar":
+        prompt =
+          basedPrompt +
+          "The navbar should include a logo on the left, links to 'Home', 'About', 'Services', and 'Contact' pages, and an account button on the right.";
+        break;
       case "table":
-        prompt = basedPromptExample + "<input class='' placeholder='search...'>";
+        prompt =
+          basedPromptExample +
+          `<table class=''>
+        <thead class=''>
+          <tr>
+            <th class=''>Name</th>
+            <th class=''>Age</th>
+            <th class=''>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class=''>
+            <td class=''>John Doe</td>
+            <td class=''>25</td>
+            <td class=''>New York</td>
+          </tr>
+          <tr class=''>
+            <td class=''>Jane Doe</td>
+            <td class=''>30</td>
+            <td class=''>London</td>
+          </tr>
+          <tr class=''>
+            <td class=''>John Smith</td>
+            <td class=''>45</td>
+            <td class=''>Paris</td>
+          </tr>
+        </tbody>
+      </table>
+      `;
         break;
       case "button":
         prompt = basedPromptExample + "<button class=''>Click Me !</button>";
         break;
       case "input":
-        prompt = basedPromptExample + "<input class='' placeholder='search...'>";
+        prompt =
+          basedPromptExample +
+          "<input type='text' class='' placeholder='search...'>";
+        break;
+      case "select":
+        prompt =
+          basedPromptExample +
+          `<select class="">
+          <option class="">--Please choose an option--</option>
+          <option class="">Dog</option>
+          <option class="">Cat</option>
+          <option class="">Hamster</option>
+          <option class="">Parrot</option>
+          <option class="">Spider</option>
+          <option class="">Goldfish</option>
+      </select>`;
+        break;
+      case "checkbox":
+        prompt =
+          basedPromptExample + "<input class='' type='checkbox' checked>";
         break;
       default:
         prompt = `Generate a ${component} component using ${framework} with a ${style} style. The component should be responsive, easy to navigate, and adaptable to different devices.`;
     }
-    
   }
 
   console.log(prompt);
