@@ -56,32 +56,35 @@
                 <h2 class="text-3xl font-semibold text-gray-900 mt-3 mb-4">Settings</h2>
                 <label for="Toggle3" class="inline-flex rounded-md cursor-pointer text-gray-100 mb-4">
                     <input id="Toggle3" type="checkbox" class="hidden peer" v-model="customPrompt">
-                    <span class="flex items-center justify-center text-center text-sm flex-1 px-3 py-2 rounded-l-md bg-violet-600 peer-checked:bg-gray-700">Settings</span>
-                    <span class="flex items-center justify-center text-center text-sm flex-1 px-3 py-2 rounded-r-md bg-gray-700 peer-checked:bg-violet-600">Custom prompt</span>
+                    <span
+                        class="flex items-center justify-center text-center text-sm flex-1 px-3 py-2 rounded-l-md bg-violet-600 peer-checked:bg-gray-700">Settings</span>
+                    <span
+                        class="flex items-center justify-center text-center text-sm flex-1 px-3 py-2 rounded-r-md bg-gray-700 peer-checked:bg-violet-600">Custom
+                        prompt</span>
                 </label>
             </div>
-            <form @submit.prevent="generateComponent(false)" v-if="!this.customPrompt">
+            <form @submit.prevent="generateComponent(false)" v-if="!customPrompt">
                 <div class="space-y-4">
                     <div>
                         <label for="framework" class="text-lg font-semibold text-violet-600">Framework</label>
                         <div class="relative mb-4">
                             <select id="framework" v-model="framework"
                                 class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white">
-                                <option v-for="(framework, index) in frameworks" :key="index">{{ framework }}</option>
+                                <option v-for="(framework, index) in frameworkList" :key="index">{{ framework }}</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                                <IconChevron/>
+                                <IconChevron />
                             </div>
                         </div>
                         <label class="text-lg font-semibold text-violet-600">Component Type</label>
                         <div class="relative mb-4">
                             <select v-model="component"
                                 class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white">
-                                <option v-for="(component, index) in components" :key="index">{{ component }}
+                                <option v-for="(component, index) in componentList" :key="index">{{ component }}
                                 </option>
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                                <IconChevron/>
+                                <IconChevron />
                             </div>
                         </div>
 
@@ -89,7 +92,7 @@
                         <div class="relative mb-4">
                             <select v-model="style"
                                 class="block appearance-none w-full text-lg py-3 px-4 pr-8 leading-none border-2 border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white">
-                                <option v-for="(style, index) in styles" :key="index">{{ style }}
+                                <option v-for="(style, index) in styleList" :key="index">{{ style }}
                                 </option>
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
@@ -158,7 +161,7 @@
                     <button type="button"
                         class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block mr-4"
                         @click="share">
-                        <IconShare/>
+                        <IconShare />
                     </button>
                     <button type="button"
                         class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block mr-4"
@@ -209,7 +212,7 @@
                 <div v-if="tab === 'code'" class="flex items-center m-2">
                     <button type="button"
                         class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block"
-                        @click="copyToClipboard">
+                        @click="copyToClipboard(generatedComponentCode)">
                         <IconCopy />
                     </button>
                 </div>
@@ -225,244 +228,140 @@
         </div>
     </div>
 </template>
-  
-<script>
+
+<script setup>
 
 import htmlContent from '@/components/defaultComponent.js';
 import { useToast } from "vue-toastification";
 
-export default {
-    name: "GenerationPage",
-    data() {
-        return {
-            framework: 'Tailwindcss',
-            frameworks: ['Tailwindcss', 'Bootstrap'],
-            component: 'Navbar',
-            components: ['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action', 'modals', 'badge', 'header', 'select', 'loader', 'checkbox', 'carousel', 'accordion', 'dropdown', 'breadcrumb', 'sidebar'],
-            style: 'Modern',
-            styles: ['Modern', 'Classic', 'Minimalist', 'Flat', 'Material', 'Neumorphism', 'Skeuomorphism', 'Vintage', 'Brutalist', 'Cartoonish', 'Retro'],
-            primaryColor: '#7c3aed',
-            secondaryColor: '#d1d5db',
-            tab: 'render',
-            generatedComponentCode: '',
-            componentId: null,
-            isLoading: false,
-            defaultComponent: htmlContent,
-            selectedScreenSize: 'xl',
-            fullscreen: false,
-            showModal: false,
-            apiKey: '',
-            customPrompt: false,
-            prompt: '',
-        };
-    },
-    computed: {
-        interpretedCode() {
-            if (!this.generatedComponentCode) {
-                return this.defaultComponent;
-            }
-            return this.codeInterpreter(this.framework, this.generatedComponentCode);
-        },
-        cssLink() {
-            /* eslint-disable no-useless-escape */
-            return this.framework === 'Bootstrap'
-                ? '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"><\/script>'
-                : '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">';
-            /* eslint-enable no-useless-escape */
-        },
-        generationType() {
-            return this.customPrompt ? 'custom' : 'supported';
-        }
-    },
-    methods: {
-        share() {
-            if (this.componentId === null) {
-                const toast = useToast();
-                toast.error('You must generate a component to share it.', {
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                });
-            } else {
-                navigator.clipboard.writeText('http://localhost:8080/component/' + this.componentId)
-                    .then(() => {
-                        const toast = useToast();
-                        toast.success('Link copied to clipboard.', {
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                        });
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        const toast = useToast();
-                        toast.error('An error has occurred.', {
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                        });
-                    });
-            }
-        },
-        isActive(tab) {
-            return this.tab === tab;
-        },
-        async saveApiKey() {
-            try {
-                const response = await authenticatedAxios.post('/api/auth/save-api-key', { apiKey: this.apiKey });
-                console.log(response.data);
-                this.showModal = false;
-                const toast = useToast();
-                toast.success('The api key has been successfully saved, you can generate components as you wish.', {
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                });
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        async generateComponent(customPrompt) {
+const config = useRuntimeConfig()
+const toast = useToast();
 
-            const token = localStorage.getItem('token');
-            if (!token) {
-                const toast = useToast();
-                toast.error('You must be logged in to generate a component.', {
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                });
-                return;
-            }
-            if (!this.frameworks.includes(this.framework)) {
-                const toast = useToast();
-                toast.error('Invalid settings.', {
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                });
-                return;
-            }
-            this.isLoading = true;
+let framework = ref('Tailwindcss');
+let frameworkList = ref(['Tailwindcss', 'Bootstrap']);
+let component = ref('Navbar');
+let componentList = ref(['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action', 'modals', 'badge', 'header', 'select', 'loader', 'checkbox', 'carousel', 'accordion', 'dropdown', 'breadcrumb', 'sidebar']);
+let style = ref('Modern');
+let styleList = ref(['Modern', 'Classic', 'Minimalist', 'Flat', 'Material', 'Neumorphism', 'Skeuomorphism', 'Vintage', 'Brutalist', 'Cartoonish', 'Retro']);
+let primaryColor = ref('#7c3aed');
+let secondaryColor = ref('#d1d5db');
+let tab = ref('render');
+let generatedComponentCode = ref('');
+let componentId = ref(null);
+let isLoading = ref(false);
+let defaultComponent = ref(htmlContent);
+let selectedScreenSize = ref('xl');
+let fullscreen = ref(false);
+let showModal = ref(false);
+let apiKey = ref('');
+let customPrompt = ref(false);
+let prompt = ref('');
 
-            if(customPrompt === true) {
+const generationType = computed(() => {
+    return customPrompt.value ? 'custom' : 'supported';
+});
 
-                try {
-                const response = await authenticatedAxios.post("/api/components/generate",
-                    {
-                        prompt: this.prompt
-                    },
-                );
-                this.generatedComponentCode = response.data.generatedComponent;
-                this.componentId = response.data.componentId;
-            } catch (error) {
-                console.error(error);
-                if (error.response && (error.response.data.message === "You have reached the limit of 10 generated components." || "Invalid API key.")) {
-                    this.showModal = true;
-                    const toast = useToast();
-                    toast.error(error.response.data.message, {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                } else {
-                    const toast = useToast();
-                    const message = error.response ? error.response.data.message : 'An error occurred while generating the component';
-                    toast.error(message, {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                }
-            } finally {
-                this.isLoading = false;
-            }
-
-            } else {
-                try {
-                const response = await authenticatedAxios.post("/api/components/generate",
-                    {
-                        component: this.component,
-                        framework: this.framework,
-                        style: this.style,
-                        primaryColor: this.primaryColor,
-                        secondaryColor: this.secondaryColor
-                    },
-                );
-                this.generatedComponentCode = response.data.generatedComponent;
-                this.componentId = response.data.componentId;
-            } catch (error) {
-                console.error(error);
-                if (error.response && (error.response.data.message === "You have reached the limit of 10 generated components." || "Invalid API key.")) {
-                    this.showModal = true;
-                    const toast = useToast();
-                    toast.error(error.response.data.message, {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                } else {
-                    const toast = useToast();
-                    const message = error.response ? error.response.data.message : 'An error occurred while generating the component';
-                    toast.error(message, {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                }
-            } finally {
-                this.isLoading = false;
-            }
-            }
-        },
-        codeInterpreter(framework, code) {
-            /* eslint-disable no-useless-escape */
-            let cssLink = framework === 'Bootstrap'
-                ? '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"><\/script>'
-                : '<script src="https://cdn.tailwindcss.com"><\/script>';
-
-            return `<html>
-                    <head>
-                        ${cssLink}
-                    </head>
-                    <body style="background-color: #f9fafb;">
-                        ${code}
-                        <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                      var links = document.getElementsByTagName('a');
-                      for (var i = 0; i < links.length; i++) {
-                        links[i].addEventListener('click', function(e) {
-                          e.preventDefault();
-                        });
-                      }
-                    });
-                  <\/script>
-                    </body>
-                </html>`;
-            /* eslint-enable no-useless-escape */
-        },
-        getIframeSize() {
-            switch (this.selectedScreenSize) {
-                case 'xs': return { width: '320px', height: '100%' };
-                case 'sm': return { width: '640px', height: '100%' };
-                case 'md': return { width: '768px', height: '100%' };
-                case 'lg': return { width: '1024px', height: '100%' };
-                case 'xl': return { width: '1280px', height: '100%' };
-                default: return { width: '100%', height: '100%' };
-            }
-        },
-        copyToClipboard() {
-            navigator.clipboard.writeText(this.generatedComponentCode)
-                .then(() => {
-                    const toast = useToast();
-                    toast.success('Code copied to clipboard.', {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                })
-                .catch(error => {
-                    console.log(error);
-                    const toast = useToast();
-                    toast.error('An error has occurred.', {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                });
-        },
+const interpretedCode = computed(() => {
+    if (!generatedComponentCode.value) {
+        return defaultComponent.value;
     }
+    return codeInterpreter(framework.value, generatedComponentCode.value);
+});
+
+const { share } = useShare();
+const { copyToClipboard } = useCopy();
+const { codeInterpreter } = useCodeInterpreter();
+
+const isActive = (currentTab) => {
+    return tab.value === currentTab;
 };
+
+const saveApiKey = async () => {
+    const response = await fetch(config.public.apiBaseUrl + '/api/auth/save-api-key', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ apiKey: apiKey }),
+    });
+
+    showModal = false;
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        console.log(data.errors[0].msg);
+    } else {
+        console.log(data.message);
+    }
+
+}
+
+const generateComponent = async (customPrompt) => {
+
+    isLoading = true;
+
+    if (customPrompt === true) {
+
+        const response = await $fetch(config.public.apiBaseUrl + '/api/components/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: prompt }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.log(data.errors[0].msg);
+        } else {
+            console.log(data.message);
+        }
+
+
+    } else {
+        const response = await $fetch(config.public.apiBaseUrl + '/api/components/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                component: component,
+                framework: framework,
+                style: style,
+                primaryColor: primaryColor,
+                secondaryColor: secondaryColor
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.log(data.errors[0].msg);
+        } else {
+            console.log(data.message);
+        }
+    }
+    isLoading = false;
+}
+
+
+
+
+const getIframeSize = () => {
+    switch (selectedScreenSize.value) {
+        case 'xs': return { width: '320px', height: '100%' };
+        case 'sm': return { width: '640px', height: '100%' };
+        case 'md': return { width: '768px', height: '100%' };
+        case 'lg': return { width: '1024px', height: '100%' };
+        case 'xl': return { width: '1280px', height: '100%' };
+        default: return { width: '100%', height: '100%' };
+    }
+}
+
 </script>
-  
+
 <style scoped>
 @keyframes rotate {
     0% {

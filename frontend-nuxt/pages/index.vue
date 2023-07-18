@@ -100,13 +100,15 @@ const config = useRuntimeConfig()
 const { data: components, error, pending } = useFetch(config.public.apiBaseUrl + '/api/components/explore', params)
 
 const subscribe = async () => {
-  const response = await fetch(config.public.apiBaseUrl + '/api/newsletter/subscribe', {
+  const response = await $fetch(config.public.apiBaseUrl + '/api/newsletter/subscribe', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ email: email.value }),
   });
+
+  console.log(response)
 
   const data = await response.json();
 
