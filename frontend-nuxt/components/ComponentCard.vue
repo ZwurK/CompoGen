@@ -20,7 +20,7 @@
                 </svg></button>
 
             <div class="flex gap-1 items-center justify-center" v-if="isLoggedIn">
-                <IconLikeFill v-if="isComponentFavorited() === false" class="text-gray-400 hover:text-gray-600 h-7 w-7"
+                <IconLikeFill v-if="isLikedByUser() === false" class="text-gray-400 hover:text-gray-600 h-7 w-7"
                     @click="toggleFavorite" />
                 <IconLikeEmpty v-else class="text-gray-400 hover:text-gray-600 h-7 w-7" @click="toggleFavorite" />
                 <span class="text-lg text-gray-600">{{ this.favorites }}</span>
@@ -47,11 +47,12 @@ export default {
             return this.component.likes;
         },
         ...mapGetters('user', ['isLoggedIn']),
-    },
-    methods: {
-        isComponentFavorited() {
+        isLikedByUser() {
             return this.$store.state.favorite.userFavorites.includes(this.component._id);
         },
+
+    },
+    methods: {
         async copyToClipboard(code) {
             navigator.clipboard.writeText(code)
                 .then(() => {

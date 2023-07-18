@@ -17,6 +17,7 @@
     "nuxt-monaco-editor": "^1.2.2"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
     "vue-toastification": "^2.0.0-rc.5",
     "vuex": "^4.0.2"
   }
