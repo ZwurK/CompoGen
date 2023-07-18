@@ -71,7 +71,17 @@ exports.login = async (req, res) => {
       expiresIn: tokenExpiry,
     });
 
-    return res.status(200).json({ token });
+    // Créer un objet avec les informations de l'utilisateur à renvoyer
+    const userData = {
+      _id: user._id,
+      email: user.email,
+      likedComponents: user.likedComponents,
+      generatedComponents: user.generatedComponents,
+      numberGeneration: user.numberGeneration
+      // Ajoutez ici toutes les autres informations de l'utilisateur que vous voulez renvoyer
+    };
+
+    return res.status(200).json({ token, user: userData });
   } catch (error) {
     return res
       .status(500)

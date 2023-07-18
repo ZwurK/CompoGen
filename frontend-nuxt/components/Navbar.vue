@@ -88,8 +88,7 @@
 <script setup>
 import { useToast } from "vue-toastification";
 import { watchEffect, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { useStore } from 'vuex';
+import { useUserStore } from '~/stores/user';
 
 const showModal = ref(false);
 const formType = ref('login');
@@ -97,10 +96,10 @@ const showDropdown = ref(false);
 const isOpen = ref(false);
 
 const currentPage = ref('');
-const store = useStore()
 const route = useRoute()
+const userStore = useUserStore();
 
-const isLoggedIn = computed(() => store.getters['user/isLoggedIn'])
+const isLoggedIn = computed(() => userStore.isLoggedIn);
 
 watchEffect(() => {
   currentPage.value = route.name;
@@ -123,14 +122,6 @@ const toggleDropdown = () => {
 };
 
 const logout = () => {
-  this.$store.dispatch('user/logout')
-    .then(() => {
-      const toast = useToast();
-      toast.success('You have successfully logged off.', {
-        closeOnClick: true,
-        pauseOnHover: true,
-      });
-      this.$router.push('/');
-    });
+  userStore.logout()
 };
 </script>

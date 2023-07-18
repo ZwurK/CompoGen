@@ -6,7 +6,7 @@
                     <div>
                         <label for="email" class="sr-only">Email</label>
                         <input v-model="email" id="email" name="email" type="email" required
-                        class="w-full py-2 px-3 leading-none border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white"
+                            class="w-full py-2 px-3 leading-none border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent bg-white"
                             placeholder="Email" />
                     </div>
                     <div class="mt-2">
@@ -33,47 +33,28 @@
     </div>
 </template>
     
-<script>
-
+<script setup>
+import { ref } from 'vue';
 import { useToast } from "vue-toastification";
+import { useRouter } from 'vue-router';
+import { useUserStore } from '~/stores/user';
 
-export default {
-    name: 'LoginForm',
-    data() {
-        return {
-            email: '',
-            password: '',
-            errors: []
-        };
-    },
-    methods: {
-        // Appelle l'action login (les redirections et gestion d'erreurs restent souvent dans le composant)
-        login() {
-            this.$store.dispatch('user/login', {
-                email: this.email,
-                password: this.password
-            })
-                .then(() => {
-                    const toast = useToast();
-                    toast.success('You are now successfully connected!', {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                    this.$router.push('/profile');
-                })
-                .catch(error => {
-                    if (error.response && error.response.data) {
-                        if (error.response.data.errors) {
-                            this.errors = error.response.data.errors;
-                        } else if (error.response.data.message) {
-                            this.errors = [{ msg: error.response.data.message }]
-                        }
-                    } else {
-                        this.errors = [{ msg: 'Une erreur inattendue est survenue. Veuillez réessayer.' }]
-                    }
-                });
-        }
-    },
-};
+const toast = useToast();
+const router = useRouter();
+const userStore = useUserStore();
+
+const email = ref('');
+const password = ref('');
+const errors = ref([]);
+
+const login = async () => {
+    try {
+        const credentials = { email: email.value, password: password.value }
+        await userStore.login(credentials)
+    } catch (error) {
+        console.log(error)
+    }
+}
 </script>
+
     

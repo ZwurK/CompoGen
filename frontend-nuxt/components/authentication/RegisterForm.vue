@@ -44,53 +44,28 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { useToast } from 'vue-toastification';
+import { useUserStore } from '~/stores/user';
 
-import { useToast } from "vue-toastification";
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const errors = ref([]);
 
-export default {
-  name: 'RegisterForm',
-  data() {
-    return {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      errors: []
-    };
-  },
-  methods: {
-    register() {
-      if (this.password !== this.confirmPassword) {
-        this.errors = [{ msg: 'Les mots de passe ne correspondent pas.' }];
-        return;
-      }
+const userStore = useUserStore();
 
-      this.$store.dispatch('user/register', {
-        username: this.username,
-        email: this.email,
-        password: this.password
-      })
-        .then(() => {
-          const toast = useToast();
-          toast.success('Your account has been successfully created. Please log in.', {
-            closeOnClick: true,
-            pauseOnHover: true,
-          });
-          this.$emit('switchForm');
-        })
-        .catch(error => {
-          if (error.response && error.response.data) {
-            if (error.response.data.errors) {
-              this.errors = error.response.data.errors;
-            } else if (error.response.data.message) {
-              this.errors = [{ msg: error.response.data.message }]
-            }
-          } else {
-            this.errors = [{ msg: 'Une erreur inattendue est survenue. Veuillez réessayer.' }]
-          }
-        });
+const register = async () => {
+  try {
+    const credentials = {
+      username: username.value,
+      email: email.value,
+      password: password.value
     }
-  },
-};
+    await userStore.register(credentials)
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>
