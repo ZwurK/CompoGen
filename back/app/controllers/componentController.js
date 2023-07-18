@@ -266,7 +266,7 @@ exports.explore = async (req, res) => {
       },
     };
     const result = await Component.paginate(filterObject, options);
-    res.json(result);
+    res.json(result.docs);
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: error.message, stack: error.stack });

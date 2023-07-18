@@ -1,6 +1,3 @@
-// import authenticatedAxios from "../../config/authenticatedAxios";
-// import unauthenticatedAxios from "../../config/unauthenticatedAxios";
-
 const state = {
   userFavorites: [],
   components: [],
@@ -30,6 +27,9 @@ const mutations = {
   setUserFavorites(state, favorites) {
     state.userFavorites = favorites;
   },
+  setComponents(state, components) {
+    state.components = components;
+  },
   addFavorite(state, componentId) {
     state.userFavorites.push(componentId);
   },
@@ -38,9 +38,6 @@ const mutations = {
     if (index !== -1) {
       state.userFavorites.splice(index, 1);
     }
-  },
-  setComponents(state, components) {
-    state.components = components;
   },
   updateComponentLikes(state, { componentId, likes }) {
     const index = state.components.findIndex(
