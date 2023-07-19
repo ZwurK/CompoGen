@@ -3,7 +3,7 @@
     <div class="flex gap-10 mx-20 mb-10">
       <select
         class="block w-full bg-white border-2 border-gray-300 focus:border-purple-500 text-base leading-6 font-medium rounded-md text-gray-700 focus:outline-none transition ease-in-out duration-150 px-3 py-2 mb-4"
-        v-model="params.sort" @change="loadComponents">
+        v-model="params.sort" @change="reloadComponents">
         <option value="date:asc">Date (Asc)</option>
         <option value="date:desc">Date (Desc)</option>
         <option value="likes:asc">Popularity (Asc)</option>
@@ -12,17 +12,17 @@
 
       <select
         class="block w-full bg-white border-2 border-gray-300 focus:border-purple-500 text-base leading-6 font-medium rounded-md text-gray-700 focus:outline-none transition ease-in-out duration-150 px-3 py-2 mb-4"
-        v-model="params.filter" @change="loadComponents">
+        v-model="params.filters.framework" @change="reloadComponents">
         <option value="">All</option>
-        <option value="framework:Bootstrap">Bootstrap</option>
-        <option value="framework:Tailwindcss">TailwindCSS</option>
+        <option value="Bootstrap">Bootstrap</option>
+        <option value="Tailwindcss">TailwindCSS</option>
       </select>
 
-      <select v-model="params.filter"
+      <select v-model="params.filters.type"
         class="block w-full bg-white border-2 border-gray-300 focus:border-purple-500 text-base leading-6 font-medium rounded-md text-gray-700 focus:outline-none transition ease-in-out duration-150 px-3 py-2 mb-4"
-        @change="loadComponents">
+        @change="reloadComponents">
         <option value="">All</option>
-        <option v-for="(componentType, index) in componentsType" :key="index" :value="'type:' + componentType">{{
+        <option v-for="(componentType, index) in componentsType" :key="index" :value="componentType">{{
           componentType }}</option>
       </select>
     </div>
@@ -63,27 +63,42 @@ let params = ref({
   page: 1,
   limit: 10,
   sort: 'date:asc',
-  filter: '',
+  filters: {
+    framework: '',
+    type: ''
+  }
 })
+
 let componentsType = ref(['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action'])
 
+const transformFiltersToString = (filters) => {
+  const filterEntries = Object.entries(filters).filter(([, value]) => value); // filtrer les entrées sans valeur
+  return filterEntries.map(([key, value]) => `${key}:${value}`).join(",");
+};
 
-onMounted(() => {
-  componentStore.fetchComponents(params);
-});
+const reloadComponents = () => {
+  params.value.filterString = transformFiltersToString(params.value.filters);
+  componentStore.fetchComponents(params.value);
+};
 
 const nextPage = async () => {
-  params.page++;
-  componentStore.fetchComponents(params);
+  params.value.page++;
+  params.value.filterString = transformFiltersToString(params.value.filters);
+  componentStore.fetchComponents(params.value);
   window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+};
+
 const previousPage = async () => {
-  if (params.page > 1) {
-    params.page--;
-    componentStore.fetchComponents(params);
+  if (params.value.page > 1) {
+    params.value.page--;
+    params.value.filterString = transformFiltersToString(params.value.filters);
+    componentStore.fetchComponents(params.value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-}
+
+};
+
+
 
 </script>
 

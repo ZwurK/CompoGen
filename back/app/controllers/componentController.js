@@ -236,14 +236,15 @@ exports.generate = async (req, res) => {
 };
 
 exports.explore = async (req, res) => {
-  const { page = 1, limit = 10, sort, filter } = req.query;
+  console.log(req.query)
+  const { page, limit, sort, filterString } = req.query;
   let filterObject = {};
   let sortObject = {};
 
-  if (filter) {
-    const filterArray = filter.split(",");
-    filterArray.forEach((filter) => {
-      const [key, value] = filter.split(":");
+  if (filterString) {
+    const filterArray = filterString.split(",");
+    filterArray.forEach((filterString) => {
+      const [key, value] = filterString.split(":");
       filterObject[key] = value;
     });
   }

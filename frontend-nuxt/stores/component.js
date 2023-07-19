@@ -25,7 +25,7 @@ export const useComponentStore = defineStore({
           headers: {
             "Content-Type": "application/json",
           },
-          query: JSON.stringify(params),
+          query: params,
         }
       );
 
