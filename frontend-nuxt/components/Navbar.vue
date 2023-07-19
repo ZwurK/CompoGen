@@ -43,17 +43,17 @@
           class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white">
           <li>
             <router-link to="/"
-              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Home' }"
+              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'index' }"
               class="block py-2 pl-3 pr-4 rounded md:text-gray-900 md:hover:text-violet-600 md:rounded-none md:bg-transparent md:p-0">Home</router-link>
           </li>
           <li>
             <router-link to="/generate"
-              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Generation' }"
+              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'generate' }"
               class="block py-2 pl-3 pr-4 rounded md:text-gray-900 md:hover:text-violet-600 md:rounded-none md:bg-transparent md:p-0">Generate</router-link>
           </li>
           <li>
             <router-link to="/explore"
-              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'Exploration' }"
+              :class="{ 'text-white bg-violet-600 border-b-2 border-violet-600 md:text-violet-600': currentPage === 'explore' }"
               class="block py-2 pl-3 pr-4 rounded md:text-gray-900 md:hover:text-violet-600 md:rounded-none md:bg-transparent md:p-0">Explore</router-link>
           </li>
         </ul>
@@ -103,6 +103,7 @@ const isLoggedIn = computed(() => userStore.isLoggedIn);
 
 watchEffect(() => {
   currentPage.value = route.name;
+  console.log(currentPage.value)
 });
 
 const toggleModal = () => {
