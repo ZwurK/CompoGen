@@ -11,7 +11,7 @@
             <img v-else src="/images/tailwindcss_logo.png" class="h-6 w-auto" />
             <button type="button"
                 class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block"
-                @click="$router.push('/component/' + component._id)"><svg viewBox="0 0 24 24" fill="none"
+                @click="navigateTo('/component/' + component._id)"><svg viewBox="0 0 24 24" fill="none"
                     xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
                     <path d="M3 3H9V5H5V9H3V3Z" fill="currentColor"></path>
                     <path d="M3 21H9V19H5V15H3V21Z" fill="currentColor"></path>
@@ -48,8 +48,6 @@ const config = useRuntimeConfig();
 
 let props = defineProps(['component']);
 
-let favorites = computed(() => props.component.likes);
-
 let isLikedByUser = computed(() => {
     return userStore.user.likedComponents.includes(props.component._id);
 });
@@ -62,30 +60,27 @@ async function toggleFavorite() {
         return;
     }
 
-    console.log('test')
-
-    const isFavorite = userStore.user.likedComponents.includes(props.component._id);
-
     try {
-        let response;
-        if (isFavorite) {
+
+        if (isLikedByUser) {
             const { data, error, execute } = useFetch(`/api/favorite/unlike/${props.component._id}`, {
                 method: 'PUT',
                 baseURL: config.public.apiBaseUrl,
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userStore.token}`,
                 },
             })
 
             // Execute the request
             await execute()
         } else {
-            response = await useFetch();
             const { data, error, execute } = useFetch(`/api/favorite/like/${props.component._id}`, {
                 method: 'PUT',
                 baseURL: config.public.apiBaseUrl,
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userStore.token}`,
                 },
             })
 

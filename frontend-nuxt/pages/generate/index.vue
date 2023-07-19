@@ -220,7 +220,7 @@
 
             <div class="h-full overflow-hidden">
                 <div v-if="tab === 'render'" class="border-b-2 w-full h-full flex items-center justify-center"> <iframe
-                        :srcdoc="interpretedCode || defaultComponent" :style="getIframeSize()"></iframe></div>
+                        :srcdoc="interpretedCode || defaultComponent" :style="iframeSize(selectedScreenSize)"></iframe></div>
 
                 <CodeTextarea v-if="tab === 'code' && !fullscreen" :componentCode="generatedComponentCode"
                     class="w-full h-full overflow-auto focus:outline-none border-b-2" />
@@ -272,6 +272,7 @@ const interpretedCode = computed(() => {
 const { share } = useShare();
 const { copyToClipboard } = useCopy();
 const { codeInterpreter } = useCodeInterpreter();
+const { iframeSize } = useIframeSize();
 const userStore = useUserStore();
 
 const isActive = (currentTab) => {
@@ -366,20 +367,6 @@ const generateComponent = async (customPrompt) => {
             componentId.value = response.componentId;
             return response;
         }
-    }
-}
-
-
-
-
-const getIframeSize = () => {
-    switch (selectedScreenSize.value) {
-        case 'xs': return { width: '320px', height: '100%' };
-        case 'sm': return { width: '640px', height: '100%' };
-        case 'md': return { width: '768px', height: '100%' };
-        case 'lg': return { width: '1024px', height: '100%' };
-        case 'xl': return { width: '1280px', height: '100%' };
-        default: return { width: '100%', height: '100%' };
     }
 }
 
