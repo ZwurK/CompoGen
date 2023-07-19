@@ -79,6 +79,7 @@ export const useUserStore = defineStore({
         method: 'GET',
         baseURL: config.public.apiBaseUrl,
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.token}`,
         },
       })
