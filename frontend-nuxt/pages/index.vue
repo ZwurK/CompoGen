@@ -54,11 +54,11 @@
         </div>
 
         <div class="relative">
-            <!-- <div v-if="pending"></div>
+            <div v-if="pending"></div>
             <div v-else class="flex gap-3 overflow-x-scroll hide-scrollbar" ref="scroller">
                 <ComponentCard class="flex-1 min-w-[360px]" v-for="component in components" :key="component.id"
                     :component="component" />
-            </div> -->
+            </div>
         </div>
     </section>
 
@@ -87,7 +87,13 @@
   
 <script setup>
 
-const email = ref('');
+definePageMeta({
+  middleware: ['fetch-user-data']
+})
+
+let email = ref(null);
+let pending = ref(false);
+let components = ref(null);
 
 let params = {
     page: 1,
@@ -96,37 +102,61 @@ let params = {
     filter: '',
 }
 
-// const config = useRuntimeConfig()
-// const { data: components, error, pending } = useFetch(config.public.apiBaseUrl + '/api/components/explore', params)
+const config = useRuntimeConfig()
+
+const fetchTopComponents = async () => {
+    pending.value = true;
+    const { data, error, execute } = useFetch(config.public.apiBaseUrl + '/api/components/explore', {
+        method: 'GET',
+        baseURL: config.public.apiBaseUrl,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        query: JSON.stringify(params),
+    })
+
+     // Execute the request
+     await execute()
+    
+    if (error.value) {
+      // Handle error
+      throw error.value; 
+    } else {
+      components.value = data.value;
+    }
+    pending.value = false;
+}
+
+onMounted(fetchTopComponents);
 
 const subscribe = async () => {
-  const response = await useFetch(config.public.apiBaseUrl + '/api/newsletter/subscribe', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email: email.value }),
-  });
+    const response = await useFetch(config.public.apiBaseUrl + '/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email.value }),
+    });
 
-  console.log(response)
+    console.log(response)
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (!response.ok) {
-    console.log(data.errors[0].msg);
-  } else {
-    console.log(data.message);
-  }
+    if (!response.ok) {
+        console.log(data.errors[0].msg);
+    } else {
+        console.log(data.message);
+    }
 };
 
 const scroll = (direction) => {
-    const container = this.$refs.scroller;
-    const maxScrollWidth = container.scrollWidth - container.clientWidth / 2 - container.clientWidth / 2;
+    const container = ref("scroller");
+    const maxScrollWidth = container.value.scrollWidth - container.value.clientWidth / 2 - container.value.clientWidth / 2;
 
     if (maxScrollWidth !== 0) {
         let scrollAmount = 0;
         const slideTimer = setInterval(() => {
-            container.scrollLeft += direction * 10;
+            container.value.scrollLeft += direction * 10;
             scrollAmount += 10;
             if (scrollAmount >= 10) {
                 clearInterval(slideTimer);
