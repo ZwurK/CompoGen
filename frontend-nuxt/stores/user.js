@@ -15,22 +15,22 @@ export const useUserStore = defineStore({
   },
   actions: {
     async login(credentials) {
-      const config = useRuntimeConfig()
-      const { data, error, execute } = useFetch('/api/auth/login', {
-        method: 'POST',
+      const config = useRuntimeConfig();
+      const { data, error, execute } = useFetch("/api/auth/login", {
+        method: "POST",
         baseURL: config.public.apiBaseUrl,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(credentials),
-      })
-    
+      });
+
       // Execute the request
-      await execute()
-    
+      await execute();
+
       if (error.value) {
         // Handle error
-        throw error.value.data.message; 
+        throw error.value.data.message;
       } else {
         let response = data.value;
         const cookie = useCookie("token");
@@ -41,24 +41,23 @@ export const useUserStore = defineStore({
       }
     },
 
-
     async register(payload) {
-      const config = useRuntimeConfig()
-      const { data, error, execute } = useFetch('/api/auth/register', {
-        method: 'POST',
+      const config = useRuntimeConfig();
+      const { data, error, execute } = useFetch("/api/auth/register", {
+        method: "POST",
         baseURL: config.public.apiBaseUrl,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      })
-    
+      });
+
       // Execute the request
-      await execute()
-    
+      await execute();
+
       if (error.value) {
         // Handle error
-        throw error.value.data.message
+        throw error.value.data.message;
       } else {
         let response = data.value;
         return response;
@@ -74,22 +73,54 @@ export const useUserStore = defineStore({
 
     async fetchUser() {
       if (!this.token) return;
-      const config = useRuntimeConfig()
-      const { data, error, execute } = useFetch('/api/profile', {
-        method: 'GET',
+      const config = useRuntimeConfig();
+      const { data, error, execute } = useFetch("/api/profile", {
+        method: "GET",
         baseURL: config.public.apiBaseUrl,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`,
         },
-      })
-      await execute()
+      });
+      await execute();
       if (error.value) {
-        throw error.value.data.message
+        throw error.value.data.message;
       } else {
         this.user = data.value;
       }
     },
-    
+
+    async updateProfile(payload) {
+      const config = useRuntimeConfig();
+      const { data, error, execute } = useFetch("/api/profile", {
+        method: "PUT",
+        baseURL: config.public.apiBaseUrl,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // Execute the request
+      await execute();
+
+      if (error.value) {
+        // Handle error
+        console.log(error.value);
+        throw error.value;
+      } else {
+        let response = data.value;
+        console.log(response);
+
+        // Update this.user using the payload properties
+        this.user = {
+          ...this.user, // Spread the existing properties
+          ...payload, // Overwrite with the properties from payload
+        };
+
+        return response;
+      }
+    },
   },
 });

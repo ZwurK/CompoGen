@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col items-center justify-center space-y-20 mt-40">
 
-    <div v-if="user">
+    <div>
       <h1 class="text-3xl font-semibold text-gray-900 mt-3">Profil</h1>
-      <p class="text-lg font-semibold text-violet-600">Nom: {{ user.username }}</p>
-      <p class="text-lg font-semibold text-violet-600">Email: {{ user.email }}</p>
+      <p class="text-lg font-semibold text-violet-600">Nom: {{ userStore.user.username }}</p>
+      <p class="text-lg font-semibold text-violet-600">Email: {{ userStore.user.email }}</p>
 
       <h2 class="text-2xl font-semibold text-gray-900 mt-2">Mettre à jour le profil</h2>
       <form @submit.prevent="updateProfile" class="space-y-4">
@@ -23,12 +23,6 @@
           </div>
         </button>
       </form>
-      <div v-if="errors.length > 0" class="errors text-red-500">
-        <ul>
-          <li v-for="(error, index) in errors" :key="index">{{ error.msg }}</li>
-        </ul>
-      </div>
-      <div v-if="successMessage" class="success-message text-green-500">{{ successMessage }}</div>
     </div>
     <button @click="logout"
       class="rounded bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 px-4 py-2 text-white mt-96">
@@ -37,72 +31,31 @@
   </div>
 </template>
 
+<script setup>
 
-<script>
-import { useToast } from "vue-toastification";
+definePageMeta({
+  middleware: ['fetch-user-data']
+})
 
-export default {
-  name: 'ProfilePage',
-  data() {
-    return {
-      user: null,
-      newUsername: '',
-      newPassword: '',
-      errors: [],
-      successMessage: '',
-    };
-  },
-  created() {
-    this.fetchUserProfile();
-  },
-  methods: {
-    fetchUserProfile() {
-      authenticatedAxios.get('/api/profile')
-        .then(response => {
-          this.user = response.data;
-          this.newUsername = this.user.username;
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-    updateProfile() {
-      const payload = {};
-      if (this.newUsername) {
-        payload.username = this.newUsername;
-      }
-      if (this.newPassword) {
-        payload.newPassword = this.newPassword;
-      }
+import { useUserStore } from '~/stores/user';
+const userStore = useUserStore();
 
-      authenticatedAxios.put('/api/profile', payload)
-        .then(response => {
-          this.fetchUserProfile();
-          this.newUsername = '';
-          this.newPassword = '';
-          this.errors = [];
-          this.successMessage = response.data.message;
-        })
-        .catch(error => {
-          if (error.response && error.response.status === 400) {
-            this.errors = error.response.data.errors;
-          } else {
-            console.error(error);
-          }
-        });
-    },
+const newUsername = ref('');
+const newPassword = ref('');
 
-    logout() {
-      this.$store.dispatch('user/logout')
-        .then(() => {
-          const toast = useToast();
-          toast.success('You have successfully logged off.', {
-            closeOnClick: true,
-            pauseOnHover: true,
-          });
-          this.$router.push('/');
-        });
-    }
+const updateProfile = async () => {
+  const payload = {};
+  if (newUsername.value) {
+    payload.username = newUsername.value;
   }
+  if (newPassword.value) {
+    payload.newPassword = newPassword.value;
+  }
+  userStore.updateProfile(payload);
+};
+
+const logout = async () => {
+  userStore.logout();
+  navigateTo('/');
 };
 </script>
