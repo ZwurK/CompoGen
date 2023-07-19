@@ -5,19 +5,19 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 exports.generate = async (req, res) => {
   let prompt, component, framework, style, primaryColor, secondaryColor;
 
-  if (req.body.prompt && req.body.prompt != "") {
+  if (req.body.prompt && req.body.prompt._value && req.body.prompt._value != "") {
     component = "custom";
     framework = "custom";
     style = "custom";
     primaryColor = "custom";
     secondaryColor = "custom";
-    prompt = req.body.prompt;
+    prompt = req.body.prompt._value;
   } else {
-    component = req.body.component;
-    framework = req.body.framework;
-    style = req.body.style;
-    primaryColor = req.body.primaryColor;
-    secondaryColor = req.body.secondaryColor;
+    component = req.body.component._value;
+    framework = req.body.framework._value;
+    style = req.body.style._value;
+    primaryColor = req.body.primaryColor._value;
+    secondaryColor = req.body.secondaryColor._value;
 
     const basedPromptExample = `You are a senior expert in web development, modifies the ${component}'s class attribute with ${framework} classes to make it ${style}.`;
     const basedPrompt = `You are a senior expert in web development, generates ${component} using ${framework} classes to make it ${style}.`;

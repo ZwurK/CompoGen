@@ -38,11 +38,11 @@
         </div>
     </div>
 
-    <div v-if="isLoading" class="fixed z-50 inset-0 transition-opacity" aria-hidden="true">
+    <div v-if="pending" class="fixed z-50 inset-0 transition-opacity" aria-hidden="true">
         <div class="flex items-center justify-center h-screen" style="background-color: rgba(75, 85, 99, 0.75);">
             <div class="flex flex-col items-center justify-center h-screen">
                 <div class="w-1/4 relative flex flex-col items-center">
-                    <img class="rotating-image" src="../assets/images/logo.png" alt="Image à faire tourner">
+                    <img class="rotating-image" src="~/assets/images/logo.png">
                 </div>
                 <p class="text-center text-white mt-10">Please wait, component generation generally takes a minute.</p>
             </div>
@@ -232,6 +232,7 @@
 <script setup>
 
 import htmlContent from '@/components/defaultComponent.js';
+import { useUserStore } from '~/stores/user';
 import { useToast } from "vue-toastification";
 
 const config = useRuntimeConfig()
@@ -248,7 +249,7 @@ let secondaryColor = ref('#d1d5db');
 let tab = ref('render');
 let generatedComponentCode = ref('');
 let componentId = ref(null);
-let isLoading = ref(false);
+let pending = ref(false);
 let defaultComponent = ref(htmlContent);
 let selectedScreenSize = ref('xl');
 let fullscreen = ref(false);
@@ -271,6 +272,7 @@ const interpretedCode = computed(() => {
 const { share } = useShare();
 const { copyToClipboard } = useCopy();
 const { codeInterpreter } = useCodeInterpreter();
+const userStore = useUserStore();
 
 const isActive = (currentTab) => {
     return tab.value === currentTab;
@@ -281,50 +283,63 @@ const saveApiKey = async () => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userStore.token}`
         },
         body: JSON.stringify({ apiKey: apiKey }),
     });
 
     showModal = false;
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        console.log(data.errors[0].msg);
+    if (error.value) {
+        // Handle error
+        throw error.value.data.message
     } else {
-        console.log(data.message);
+        let response = data.value;
+        return response;
     }
 
 }
 
 const generateComponent = async (customPrompt) => {
 
-    isLoading = true;
-
     if (customPrompt === true) {
 
-        const response = await $fetch(config.public.apiBaseUrl + '/api/components/generate', {
+        pending.value = true;
+
+        const { data, error, execute } = await useFetch(config.public.apiBaseUrl + '/api/components/generate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userStore.token}`
             },
             body: JSON.stringify({ prompt: prompt }),
         });
 
-        const data = await response.json();
+        // Execute the request
+        await execute();
 
-        if (!response.ok) {
-            console.log(data.errors[0].msg);
+        pending.value = false;
+
+        if (error.value) {
+            // Handle error
+            throw error.value.data.message
         } else {
-            console.log(data.message);
+            let response = data.value;
+            generatedComponentCode.value = response.generatedComponent;
+            return response;
         }
 
 
     } else {
-        const response = await $fetch(config.public.apiBaseUrl + '/api/components/generate', {
+
+        pending.value = true;
+        console.log(pending.value)
+
+        const { data, error, execute } = await useFetch(config.public.apiBaseUrl + '/api/components/generate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userStore.token}`
             },
             body: JSON.stringify({
                 component: component,
@@ -335,15 +350,21 @@ const generateComponent = async (customPrompt) => {
             }),
         });
 
-        const data = await response.json();
+        // Execute the request
+        await execute();
 
-        if (!response.ok) {
-            console.log(data.errors[0].msg);
+        pending.value = false;
+        console.log(pending.value)
+
+        if (error.value) {
+            // Handle error
+            throw error
         } else {
-            console.log(data.message);
+            let response = data.value;
+            generatedComponentCode.value = response.generatedComponent;
+            return response;
         }
     }
-    isLoading = false;
 }
 
 
