@@ -81,6 +81,10 @@ const reloadComponents = () => {
   componentStore.fetchComponents(params.value);
 };
 
+onMounted(async () => {
+  reloadComponents();
+});
+
 const nextPage = async () => {
   params.value.page++;
   params.value.filterString = transformFiltersToString(params.value.filters);

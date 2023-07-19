@@ -13,7 +13,7 @@
           </button>
           <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-lg shadow-xl">
             <router-link class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white"
-              to="/favorites">
+              to="/profile/favorites">
               Favorites</router-link>
             <router-link class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white" to="/profile">
               Settings</router-link>

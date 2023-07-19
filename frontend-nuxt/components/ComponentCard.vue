@@ -21,7 +21,7 @@
 
             <div class="flex gap-1 items-center justify-center" v-if="isLoggedIn">
                 <div>
-                    <IconLikeFill v-if="isLikedByUser(component._id)" class="text-gray-400 hover:text-gray-600 h-7 w-7"
+                    <IconLikeFill v-if="!isLikedByUser(component._id)" class="text-gray-400 hover:text-gray-600 h-7 w-7"
                         @click="toggleLike(component._id)" />
                     <IconLikeEmpty v-else class="text-gray-400 hover:text-gray-600 h-7 w-7" @click="toggleLike(component._id)" />
 
