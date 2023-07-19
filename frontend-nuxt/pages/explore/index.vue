@@ -31,7 +31,7 @@
       Loading...
     </div>
     <div v-else class="flex flex-wrap justify-center lg:gap-10 xl:gap-20">
-      <ComponentCard class="basis-full lg:basis-5/12 mx-4" v-for="component in components" :key="component.id"
+      <ComponentCard class="basis-full lg:basis-5/12 mx-4" v-for="component in componentStore.components" :key="component.id"
         :component="component" />
     </div>
 
@@ -53,12 +53,12 @@ definePageMeta({
   middleware: ['fetch-user-data']
 })
 
-import { useUserStore } from '~/stores/user';
+import { useComponentStore } from '~/stores/component';
 
-const userStore = useUserStore();
+const componentStore = useComponentStore();
+const config = useRuntimeConfig()
 
-console.log(userStore.user)
-
+let pending = ref(false)
 let params = ref({
   page: 1,
   limit: 10,
@@ -67,8 +67,23 @@ let params = ref({
 })
 let componentsType = ref(['Navbar', 'Footer', 'Card', 'Table', 'Progress Bar', 'Button', 'Input', 'Form', 'Pagination', 'Alert', 'Search Bar', 'Pricing', 'Call to action'])
 
-const config = useRuntimeConfig()
-const { data: components, error, pending } = useFetch(config.public.apiBaseUrl + '/api/components/explore', params)
+
+onMounted(() => {
+  componentStore.fetchComponents(params);
+});
+
+const nextPage = async () => {
+  params.page++;
+  componentStore.fetchComponents(params);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+const previousPage = async () => {
+  if (params.page > 1) {
+    params.page--;
+    componentStore.fetchComponents(params);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
 
 </script>
 

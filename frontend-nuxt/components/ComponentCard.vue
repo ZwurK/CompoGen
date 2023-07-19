@@ -21,11 +21,12 @@
 
             <div class="flex gap-1 items-center justify-center" v-if="isLoggedIn">
                 <div>
-                    <IconLikeFill v-if="isLikedByUser" class="text-gray-400 hover:text-gray-600 h-7 w-7"
-                        @click="toggleFavorite" />
-                    <IconLikeEmpty v-else class="text-gray-400 hover:text-gray-600 h-7 w-7" @click="toggleFavorite" />
+                    <IconLikeFill v-if="isLikedByUser(component._id)" class="text-gray-400 hover:text-gray-600 h-7 w-7"
+                        @click="toggleLike(component._id)" />
+                    <IconLikeEmpty v-else class="text-gray-400 hover:text-gray-600 h-7 w-7" @click="toggleLike(component._id)" />
+
                 </div>
-                <span class="text-lg text-gray-600">{{ component.likes }}</span>
+                <span class="text-lg text-gray-600">{{ getLikes(component._id) }}</span>
             </div>
             <button @click="copyToClipboard(component.code)" class="text-gray-400 hover:text-gray-600">
                 <IconCopy class="h-7 w-7" />
@@ -40,57 +41,27 @@
 <script setup>
 
 import { useUserStore } from '~/stores/user';
+import { useComponentStore } from '~/stores/component';
 
 const userStore = useUserStore();
-const { codeInterpreter } = useCodeInterpreter();
-const { copyToClipboard } = useCopy();
-const config = useRuntimeConfig();
+const componentStore = useComponentStore();
 
 let props = defineProps(['component']);
-
-let isLikedByUser = computed(() => {
-    return userStore.user.likedComponents.includes(props.component._id);
-});
+const { codeInterpreter } = useCodeInterpreter();
+const { copyToClipboard } = useCopy();
 
 let isLoggedIn = userStore.isLoggedIn;
 
-async function toggleFavorite() {
+const isLikedByUser = (componentId) => {
+    return userStore.user.likedComponents.includes(componentId);
+}
 
-    if (!isLoggedIn) {
-        return;
-    }
+const toggleLike = (componentId) => {
+  componentStore.toggleLike(componentId);
+}
 
-    try {
-
-        if (isLikedByUser) {
-            const { data, error, execute } = useFetch(`/api/favorite/unlike/${props.component._id}`, {
-                method: 'PUT',
-                baseURL: config.public.apiBaseUrl,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userStore.token}`,
-                },
-            })
-
-            // Execute the request
-            await execute()
-        } else {
-            const { data, error, execute } = useFetch(`/api/favorite/like/${props.component._id}`, {
-                method: 'PUT',
-                baseURL: config.public.apiBaseUrl,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userStore.token}`,
-                },
-            })
-
-            // Execute the request
-            await execute()
-        }
-
-    } catch (error) {
-        console.error(error);
-    }
+const getLikes = (componentId) => {
+    return componentStore.getLikes(componentId);
 }
 
 </script>
