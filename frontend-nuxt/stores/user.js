@@ -75,7 +75,7 @@ export const useUserStore = defineStore({
     async fetchUser() {
       if (!this.token) return;
       const config = useRuntimeConfig()
-      const { data, error, execute } = useFetch('/api/profile/getProfile', {
+      const { data, error, execute } = useFetch('/api/profile', {
         method: 'GET',
         baseURL: config.public.apiBaseUrl,
         headers: {

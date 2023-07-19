@@ -5,10 +5,3 @@
     </svg>
 </template>
 
-<script>
-export default {
-    props: ['filled'],
-    name: "LikeEmptyIcon",
-}
-
-</script>

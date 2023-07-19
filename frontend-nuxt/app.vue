@@ -8,16 +8,3 @@
     <Footer/>
   </div>
 </template>
-
-<script setup>
-
-import { useUserStore } from '~/stores/user';
-const userStore = useUserStore();
-
-onMounted(async () => {
-  if (userStore.isLoggedIn) {
-    await userStore.fetchUser();
-  }
-});
-
-</script>

@@ -2,7 +2,7 @@
     <div class="rounded-lg mb-6 bg-white border-2">
         <router-link :to="`/component/${component._id}`" class="h-64 overflow-hidden">
             <div style="height: 300px;" class="border-b-2 overflow-hidden">
-                <iframe sandbox="allow-scripts" :srcdoc.prop="generateSrcDoc(component.framework, component.code)"
+                <iframe sandbox="allow-scripts" :srcdoc="codeInterpreter(component.framework, component.code)"
                     class="w-full h-full"></iframe>
             </div>
         </router-link>
@@ -20,10 +20,12 @@
                 </svg></button>
 
             <div class="flex gap-1 items-center justify-center" v-if="isLoggedIn">
-                <IconLikeFill v-if="isLikedByUser() === false" class="text-gray-400 hover:text-gray-600 h-7 w-7"
-                    @click="toggleFavorite" />
-                <IconLikeEmpty v-else class="text-gray-400 hover:text-gray-600 h-7 w-7" @click="toggleFavorite" />
-                <span class="text-lg text-gray-600">{{ this.favorites }}</span>
+                <div>
+                    <IconLikeFill v-if="isLikedByUser" class="text-gray-400 hover:text-gray-600 h-7 w-7"
+                        @click="toggleFavorite" />
+                    <IconLikeEmpty v-else class="text-gray-400 hover:text-gray-600 h-7 w-7" @click="toggleFavorite" />
+                </div>
+                <span class="text-lg text-gray-600">{{ component.likes }}</span>
             </div>
             <button @click="copyToClipboard(component.code)" class="text-gray-400 hover:text-gray-600">
                 <IconCopy class="h-7 w-7" />
@@ -35,95 +37,64 @@
 
 
 
-<script>
+<script setup>
 
-import { useToast } from "vue-toastification";
-import { mapGetters } from 'vuex';
+import { useUserStore } from '~/stores/user';
 
-export default {
-    props: ['component'],
-    computed: {
-        favorites() {
-            return this.component.likes;
-        },
-        ...mapGetters('user', ['isLoggedIn']),
-        isLikedByUser() {
-            return this.$store.state.favorite.userFavorites.includes(this.component._id);
-        },
+const userStore = useUserStore();
+const { codeInterpreter } = useCodeInterpreter();
+const { copyToClipboard } = useCopy();
+const config = useRuntimeConfig();
 
-    },
-    methods: {
-        async copyToClipboard(code) {
-            navigator.clipboard.writeText(code)
-                .then(() => {
-                    const toast = useToast();
-                    toast.success('Code copied to clipboard.', {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                })
-                .catch(error => {
-                    console.log(error);
-                    const toast = useToast();
-                    toast.error('An error has occurred.', {
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                    });
-                });
-        },
-        generateSrcDoc(framework, code) {
-            /* eslint-disable no-useless-escape */
-            let cssLink = framework === 'Bootstrap'
-                ? '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"><\/script>'
-                : '<script src="https://cdn.tailwindcss.com"><\/script>';
+let props = defineProps(['component']);
 
-            return `<html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        ${cssLink}
-                    </head>
-                    <body style="background-color: #f9fafb;">
-                        ${code}
-                        <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                      var links = document.getElementsByTagName('a');
-                      for (var i = 0; i < links.length; i++) {
-                        links[i].addEventListener('click', function(e) {
-                          e.preventDefault();
-                        });
-                      }
-                    });
-                  <\/script>
-                    </body>
-                </html>`;
-            /* eslint-enable no-useless-escape */
-        },
-        async toggleFavorite() {
+let favorites = computed(() => props.component.likes);
 
-            if (!this.isLoggedIn) {
-                return;
-            }
+let isLikedByUser = computed(() => {
+    return userStore.user.likedComponents.includes(props.component._id);
+});
 
-            const isFavorite = this.$store.state.favorite.userFavorites.includes(this.component._id);
+let isLoggedIn = userStore.isLoggedIn;
 
-            try {
-                let response;
-                if (isFavorite) {
-                    response = await authenticatedAxios.put(`/api/favorite/unlike/${this.component._id}`);
-                    this.$store.commit("favorite/removeFavorite", this.component._id);
-                } else {
-                    response = await authenticatedAxios.put(`/api/favorite/like/${this.component._id}`);
-                    this.$store.commit("favorite/addFavorite", this.component._id);
-                }
+async function toggleFavorite() {
 
-                // Mise à jour du nombre de likes du composant dans le store Vuex après l'action de l'utilisateur
-                this.$store.commit('favorite/updateComponentLikes', { componentId: this.component._id, likes: response.data.likes });
+    if (!isLoggedIn) {
+        return;
+    }
 
-            } catch (error) {
-                console.error(error);
-            }
+    console.log('test')
+
+    const isFavorite = userStore.user.likedComponents.includes(props.component._id);
+
+    try {
+        let response;
+        if (isFavorite) {
+            const { data, error, execute } = useFetch(`/api/favorite/unlike/${props.component._id}`, {
+                method: 'PUT',
+                baseURL: config.public.apiBaseUrl,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+
+            // Execute the request
+            await execute()
+        } else {
+            response = await useFetch();
+            const { data, error, execute } = useFetch(`/api/favorite/like/${props.component._id}`, {
+                method: 'PUT',
+                baseURL: config.public.apiBaseUrl,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+
+            // Execute the request
+            await execute()
         }
+
+    } catch (error) {
+        console.error(error);
     }
 }
 

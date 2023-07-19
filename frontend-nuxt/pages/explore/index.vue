@@ -49,6 +49,16 @@
 
 <script setup>
 
+definePageMeta({
+  middleware: ['fetch-user-data']
+})
+
+import { useUserStore } from '~/stores/user';
+
+const userStore = useUserStore();
+
+console.log(userStore.user)
+
 let params = ref({
   page: 1,
   limit: 10,

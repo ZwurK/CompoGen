@@ -54,11 +54,11 @@
         </div>
 
         <div class="relative">
-            <div v-if="pending"></div>
+            <!-- <div v-if="pending"></div>
             <div v-else class="flex gap-3 overflow-x-scroll hide-scrollbar" ref="scroller">
                 <ComponentCard class="flex-1 min-w-[360px]" v-for="component in components" :key="component.id"
                     :component="component" />
-            </div>
+            </div> -->
         </div>
     </section>
 
@@ -96,11 +96,11 @@ let params = {
     filter: '',
 }
 
-const config = useRuntimeConfig()
-const { data: components, error, pending } = useFetch(config.public.apiBaseUrl + '/api/components/explore', params)
+// const config = useRuntimeConfig()
+// const { data: components, error, pending } = useFetch(config.public.apiBaseUrl + '/api/components/explore', params)
 
 const subscribe = async () => {
-  const response = await $fetch(config.public.apiBaseUrl + '/api/newsletter/subscribe', {
+  const response = await useFetch(config.public.apiBaseUrl + '/api/newsletter/subscribe', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
