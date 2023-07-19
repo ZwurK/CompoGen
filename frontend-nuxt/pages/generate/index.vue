@@ -160,7 +160,7 @@
                 <div v-if="tab === 'render'" class="flex items-center">
                     <button type="button"
                         class="p-1 text-gray-600 border border-gray-200 rounded-md focus:outline-none hidden lg:block mr-4"
-                        @click="share">
+                        @click="share(componentId)">
                         <IconShare />
                     </button>
                     <button type="button"
@@ -326,6 +326,7 @@ const generateComponent = async (customPrompt) => {
         } else {
             let response = data.value;
             generatedComponentCode.value = response.generatedComponent;
+            componentId.value = response.componentId;
             return response;
         }
 
@@ -362,6 +363,7 @@ const generateComponent = async (customPrompt) => {
         } else {
             let response = data.value;
             generatedComponentCode.value = response.generatedComponent;
+            componentId.value = response.componentId;
             return response;
         }
     }
