@@ -5,20 +5,128 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 exports.generate = async (req, res) => {
   let prompt, component, framework, style, primaryColor, secondaryColor;
 
-  if (req.body.prompt && req.body.prompt != "") {
+  if (req.body.prompt && req.body.prompt._value && req.body.prompt._value != "") {
     component = "custom";
     framework = "custom";
     style = "custom";
     primaryColor = "custom";
     secondaryColor = "custom";
-    prompt = req.body.prompt;
+    prompt = req.body.prompt._value;
   } else {
-    component = req.body.component;
-    framework = req.body.framework;
-    style = req.body.style;
-    primaryColor = req.body.primaryColor;
-    secondaryColor = req.body.secondaryColor;
-    prompt = `Generate a visually stunning, one-of-a-kind, highly innovative, adaptable to different devices, and easy to navigate ${component} component using ${framework} with a ${style} style.`;
+    component = req.body.component._value;
+    framework = req.body.framework._value;
+    style = req.body.style._value;
+    primaryColor = req.body.primaryColor._value;
+    secondaryColor = req.body.secondaryColor._value;
+
+    const basedPromptExample = `You are a senior expert in web development, modifies the ${component}'s class attribute with ${framework} classes to make it ${style}.`;
+    const basedPrompt = `You are a senior expert in web development, generates ${component} using ${framework} classes to make it ${style}.`;
+
+    switch (component) {
+      case "card":
+        prompt =
+          basedPrompt +
+          "The card should include an image at the top, a title, a short description, and a 'Learn More' button at the bottom. It should have a shadow effect to give a 3D look.";
+        break;
+      case "alert":
+        prompt =
+          basedPrompt +
+          "The alert should include an icon indicating the type of alert (success, warning, error, info), a short message, and a 'Dismiss' button. It should be noticeable and should disappear after a few seconds.";
+        break;
+      case "pricing":
+        prompt =
+          basedPrompt +
+          "The pricing section should include three different pricing tiers - Basic, Premium, and Pro. Each tier should include a list of features, the price, and a 'Choose Plan' button.";
+        break;
+      case "header":
+        prompt =
+          basedPrompt +
+          "The header should include a logo on the left, links to 'Home', 'About', 'Services', 'Contact' pages, and a 'Sign In' button on the right. It should be fixed at the top of the page and remain visible when scrolling.";
+        break;
+      case "call to action":
+        prompt =
+          basedPrompt +
+          "The call to action section should include a catchy headline, a short description, and a 'Get Started' button. It should be visually striking to attract user attention.";
+        break;
+      case "hero section":
+        prompt =
+          basedPrompt +
+          "The hero section should include a large, eye-catching image or background video, a bold headline, a short description, and a 'Learn More' button. It should be the first thing users see when they visit the website.";
+        break;
+      case "form":
+        prompt =
+          basedPrompt +
+          "The form should include a title, fields for the user's email and password, a 'Remember me' checkbox, and a 'Log In' button. It should also include a 'Forgot password?' link and a 'Create account' link.";
+        break;
+      case "footer":
+        prompt =
+          basedPrompt +
+          "The footer should include a copyright notice on the left, links to 'Privacy Policy', 'Terms of Service', and 'Contact Us' pages in the middle, and social media icons on the right.";
+        break;
+      case "navbar":
+        prompt =
+          basedPrompt +
+          "The navbar should include a logo on the left, links to 'Home', 'About', 'Services', and 'Contact' pages, and an account button on the right.";
+        break;
+      case "table":
+        prompt =
+          basedPromptExample +
+          `<table class=''>
+        <thead class=''>
+          <tr>
+            <th class=''>Name</th>
+            <th class=''>Age</th>
+            <th class=''>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class=''>
+            <td class=''>John Doe</td>
+            <td class=''>25</td>
+            <td class=''>New York</td>
+          </tr>
+          <tr class=''>
+            <td class=''>Jane Doe</td>
+            <td class=''>30</td>
+            <td class=''>London</td>
+          </tr>
+          <tr class=''>
+            <td class=''>John Smith</td>
+            <td class=''>45</td>
+            <td class=''>Paris</td>
+          </tr>
+        </tbody>
+      </table>
+      `;
+        break;
+      case "button":
+        prompt = basedPromptExample + "<button class=''>Click Me !</button>";
+        break;
+      case "input":
+        prompt =
+          basedPromptExample +
+          "<input type='text' class='' placeholder='search...'>";
+        break;
+      case "select":
+        prompt =
+          basedPromptExample +
+          `<select class="">
+          <option class="">--Please choose an option--</option>
+          <option class="">Dog</option>
+          <option class="">Cat</option>
+          <option class="">Hamster</option>
+          <option class="">Parrot</option>
+          <option class="">Spider</option>
+          <option class="">Goldfish</option>
+      </select>`;
+        break;
+      case "checkbox":
+        prompt =
+          basedPromptExample + "<input class='' type='checkbox' checked>";
+        break;
+      default:
+        prompt = `Generate a ${component} component using ${framework} with a ${style} style. The component should be responsive, easy to navigate, and adaptable to different devices.`;
+    }
   }
 
   console.log(prompt);
@@ -128,14 +236,15 @@ exports.generate = async (req, res) => {
 };
 
 exports.explore = async (req, res) => {
-  const { page = 1, limit = 10, sort, filter } = req.query;
+  console.log(req.query)
+  const { page, limit, sort, filterString } = req.query;
   let filterObject = {};
   let sortObject = {};
 
-  if (filter) {
-    const filterArray = filter.split(",");
-    filterArray.forEach((filter) => {
-      const [key, value] = filter.split(":");
+  if (filterString) {
+    const filterArray = filterString.split(",");
+    filterArray.forEach((filterString) => {
+      const [key, value] = filterString.split(":");
       filterObject[key] = value;
     });
   }
@@ -158,7 +267,7 @@ exports.explore = async (req, res) => {
       },
     };
     const result = await Component.paginate(filterObject, options);
-    res.json(result);
+    res.json(result.docs);
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: error.message, stack: error.stack });
@@ -217,7 +326,8 @@ exports.getUserHistory = async (req, res) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: "An error occurred while retrieving the history of generated components.",
+      message:
+        "An error occurred while retrieving the history of generated components.",
     });
   }
 };
