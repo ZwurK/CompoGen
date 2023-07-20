@@ -54,9 +54,9 @@
         </div>
 
         <div class="relative">
-            <div v-if="pending"></div>
+            <div v-if="pending">loading</div>
             <div v-else class="flex gap-3 overflow-x-scroll hide-scrollbar" ref="scroller">
-                <ComponentCard class="flex-1 min-w-[360px]" v-for="component in components" :key="component.id"
+                <ComponentCard class="flex-1 min-w-[360px]" v-for="component in componentStore.components" :key="component.id"
                     :component="component" />
             </div>
         </div>
@@ -87,13 +87,16 @@
   
 <script setup>
 
+import { useComponentStore } from '~/stores/component';
+
 definePageMeta({
   middleware: ['fetch-user-data']
 })
 
 let email = ref(null);
 let pending = ref(false);
-let components = ref(null);
+
+const componentStore = useComponentStore();
 
 let params = {
     page: 1,
@@ -104,30 +107,11 @@ let params = {
 
 const config = useRuntimeConfig()
 
-const fetchTopComponents = async () => {
+onMounted(async () => {
     pending.value = true;
-    const { data, error, execute } = useFetch(config.public.apiBaseUrl + '/api/components/explore', {
-        method: 'GET',
-        baseURL: config.public.apiBaseUrl,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        query: JSON.stringify(params),
-    })
-
-     // Execute the request
-     await execute()
-    
-    if (error.value) {
-      // Handle error
-      throw error.value; 
-    } else {
-      components.value = data.value;
-    }
+    await componentStore.fetchComponents(params);
     pending.value = false;
-}
-
-onMounted(fetchTopComponents);
+});
 
 const subscribe = async () => {
     const response = await useFetch(config.public.apiBaseUrl + '/api/newsletter/subscribe', {
