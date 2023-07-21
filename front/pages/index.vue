@@ -38,13 +38,17 @@
                 <span>components</span>
             </h2>
             <div class="mt-4 me-10 space-x-4">
-                <button @click="scroll(-100)">
+                <button 
+                    @click="scroll(-1)"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                         class="w-6 h-6 text-gray-500">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button>
-                <button @click="scroll(100)">
+                <button 
+                    @click="scroll(1)"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                         class="w-6 h-6 text-gray-500">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -107,6 +111,8 @@ let params = {
 
 const config = useRuntimeConfig()
 
+const scroller = ref(null);
+
 onMounted(async () => {
     pending.value = true;
     await componentStore.fetchComponents(params);
@@ -134,19 +140,7 @@ const subscribe = async () => {
 };
 
 const scroll = (direction) => {
-    const container = ref("scroller");
-    const maxScrollWidth = container.value.scrollWidth - container.value.clientWidth / 2 - container.value.clientWidth / 2;
-
-    if (maxScrollWidth !== 0) {
-        let scrollAmount = 0;
-        const slideTimer = setInterval(() => {
-            container.value.scrollLeft += direction * 10;
-            scrollAmount += 10;
-            if (scrollAmount >= 10) {
-                clearInterval(slideTimer);
-            }
-        });
-    }
+    scroller.value.scrollLeft += direction * scroller.value.clientWidth * 2/3;
 }
 
 </script>
