@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   components: [
     // { path: '~/components/authentication', prefix: 'Special' },
     { path: "~/components/icons", prefix: "Icon" },
+    { path: "~/components/ui", prefix: "Ui" },
     "~/components/authentication",
     "~/components",
   ],
