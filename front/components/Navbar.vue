@@ -7,19 +7,23 @@
       </router-link>
       <div class="flex md:order-2">
         <div v-if="isLoggedIn" class="relative">
-          <button @click="toggleDropdown"
+          <!-- <button @click="toggleDropdown"
             class="text-center px-4 py-3 leading-none border-2 border-violet-600 rounded text-violet-600 md:ml-10 hover:text-white hover:bg-violet-600">
             My Account
-          </button>
-          <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-lg shadow-xl">
-            <router-link class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white"
-              to="/profile/favorites">
-              Favorites</router-link>
-            <router-link class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white" to="/profile">
-              Settings</router-link>
-            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white"
-              @click="logout">Logout</a>
-          </div>
+          </button> -->
+          <UiDropdown trigger-text="My Account">
+            <!-- <div v-show="showDropdown" class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-lg shadow-xl"> -->
+              <div>
+              <router-link class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white"
+                to="/profile/favorites">
+                Favorites</router-link>
+              <router-link class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white" to="/profile">
+                Settings</router-link>
+              <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-violet-600 hover:text-white"
+                @click="logout">Logout</a>
+              </div>
+            <!-- </div> -->
+          </UiDropdown>
         </div>
         <a v-else @click="toggleModal"
           class="text-center mr-1 px-4 py-3 leading-none border rounded text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500">
@@ -92,7 +96,6 @@ import { useUserStore } from '~/stores/user';
 
 const showModal = ref(false);
 const formType = ref('login');
-const showDropdown = ref(false);
 const isOpen = ref(false);
 
 const currentPage = ref('');
@@ -116,10 +119,6 @@ const closeModal = () => {
 
 const switchForm = () => {
   formType.value = formType.value === 'register' ? 'login' : 'register';
-};
-
-const toggleDropdown = () => {
-  showDropdown.value = !showDropdown.value;
 };
 
 const logout = () => {
