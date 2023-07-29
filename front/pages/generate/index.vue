@@ -236,6 +236,7 @@ import { useUserStore } from '~/stores/user';
 import { useToast } from "vue-toastification";
 
 const config = useRuntimeConfig()
+console.log(config);
 const toast = useToast();
 
 let framework = ref('Tailwindcss');

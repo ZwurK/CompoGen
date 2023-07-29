@@ -1,7 +1,7 @@
 // nuxt.config.js
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "nuxt-monaco-editor", '@pinia/nuxt'],
+  modules: ["@nuxtjs/tailwindcss", '@pinia/nuxt'],
   devServer: {
     port: 8080,
   },

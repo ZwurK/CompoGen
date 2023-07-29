@@ -93,9 +93,9 @@
 
 import { useComponentStore } from '~/stores/component';
 
-definePageMeta({
-  middleware: ['fetch-user-data']
-})
+// definePageMeta({
+//   middleware: ['fetch-user-data']
+// })
 
 let email = ref(null);
 let pending = ref(false);
@@ -113,11 +113,11 @@ const config = useRuntimeConfig()
 
 const scroller = ref(null);
 
-onMounted(async () => {
-    pending.value = true;
-    await componentStore.fetchComponents(params);
-    pending.value = false;
-});
+// onMounted(async () => {
+//     pending.value = true;
+//     await componentStore.fetchComponents(params);
+//     pending.value = false;
+// });
 
 const subscribe = async () => {
     const response = await useFetch(config.public.apiBaseUrl + '/api/newsletter/subscribe', {
